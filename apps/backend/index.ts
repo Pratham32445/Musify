@@ -4,6 +4,8 @@ import { UserRouter } from "./router/User.router";
 
 const app = express();
 
+app.use(express.json());
+
 app.use("/room",RoomRouter);
 app.use("/user",UserRouter);
 

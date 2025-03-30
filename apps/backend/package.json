@@ -7,6 +7,10 @@
   },
   "peerDependencies": {
     "typescript": "^5.0.0",
-    "db" : "*"
+    "db": "*",
+    "comman": "*"
+  },
+  "dependencies": {
+    "bcryptjs": "^3.0.2"
   }
 }
