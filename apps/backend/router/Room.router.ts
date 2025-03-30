@@ -20,7 +20,7 @@ router.post("/create-room", authMiddleware, async (req, res) => {
         }
     })
     res.json({
-        message: "Room Created"
+        message : "Room Created"
     })
 })
 
