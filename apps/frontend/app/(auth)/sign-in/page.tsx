@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import { Music } from "lucide-react";
 import { FcGoogle } from "react-icons/fc";
 import { FaFacebook } from "react-icons/fa6";
@@ -6,6 +7,9 @@ import { FaApple } from "react-icons/fa";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
+import axios from "axios";
+import { toast } from "sonner";
+
 
 const oAuthLoginData = [
   {
@@ -23,6 +27,39 @@ const oAuthLoginData = [
 ];
 
 const SignIn = () => {
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  async function signInUser() {
+    if (!email || !password) {
+      toast.error("Please Provide all the fields", {
+        position: "top-right",
+        style: {
+          backgroundColor: "#ef4444",
+        },
+      });
+      return;
+    }
+    try {
+      const res = await axios.post(
+        `${process.env.NEXT_PUBLIC_BACKEND_URL}/user/sign-in`,
+        {
+          email,
+          password,
+        },
+        { withCredentials: true }
+      );
+      setEmail("");
+      setPassword("");
+      toast.success(res.data.message, {
+        style: {
+          background: "#1ed760",
+        },
+        position: "top-center",
+      });
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <div
       className="w-full min-h-screen pt-10"
@@ -40,7 +77,7 @@ const SignIn = () => {
         <div className="flex flex-col items-center my-4">
           {oAuthLoginData.map(({ title, icon }, idx) => (
             <div
-              className="flex justify-center items-center gap-5 border-2 w-[300px] p-2 px-8 border-white rounded-full my-2"
+              className="flex justify-center items-center gap-5 border-1 w-[300px] p-2 px-8 border-white rounded-full my-2 cursor-pointer hover:bg-neutral-900"
               key={idx}
             >
               {icon}
@@ -56,6 +93,8 @@ const SignIn = () => {
               type="email"
               className="bg-transparent border-white border-2 outline-none focus-visible:ring-0 my-2 rounded-none "
               placeholder="johnDoe@gmail.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
             />
           </div>
           <div className="my-4">
@@ -64,13 +103,19 @@ const SignIn = () => {
               type="password"
               className="bg-transparent border-white border-2 outline-none focus-visible:ring-0 my-2 rounded-none"
               placeholder="*********"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button className="bg-[#1ed760] hover:bg-[#3be477] p-7 my-4 w-full rounded-full cursor-pointer text-white">
+          <Button onClick={signInUser} className="bg-[#1ed760] hover:bg-[#3be477] p-7 my-4 w-full rounded-full cursor-pointer text-white">
             Continue
           </Button>
           <p className="text-sm">
-            Don t have an account ? <Link href={"/sign-up"} className="underline"> Sign up for Spotify </Link>
+            Don t have an account ?{" "}
+            <Link href={"/sign-up"} className="underline">
+              {" "}
+              Sign up for Spotify{" "}
+            </Link>
           </p>
         </div>
       </div>
