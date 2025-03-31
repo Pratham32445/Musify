@@ -18,9 +18,11 @@ const Channels = () => {
   const [selectedChannel, setSelectedChannel] = useState(-1);
   return (
     <div className="mt-10">
-      <div className="my-4 flex items-center gap-4">
+      <div
+        className="my-4 flex items-center gap-4"
+        onClick={() => setSelectedChannel(-1)}
+      >
         <div
-          onClick={() => setSelectedChannel(-1)}
           className={`w-1 h-${selectedChannel == -1 ? "8" : "1"} bg-white rounded-full`}
         ></div>
         <div className="w-[40px] h-[40px] flex justify-center items-center rounded bg-[#1ed760]">
@@ -34,7 +36,7 @@ const Channels = () => {
           key={idx}
         >
           <div
-            className={`w-1 h-${selectedChannel == idx ? "8" : "1"} bg-white rounded-full`}
+            className={`w-1 h-${selectedChannel == idx ? "8" : "3"} bg-white rounded-full`}
           ></div>
           <Image
             src={img}
