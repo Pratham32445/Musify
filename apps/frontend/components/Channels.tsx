@@ -19,7 +19,7 @@ const Channels = () => {
   return (
     <div className="mt-10">
       <div
-        className="my-4 flex items-center gap-4"
+        className="my-4 flex items-center gap-4 pr-4 cursor-pointer"
         onClick={() => setSelectedChannel(-1)}
       >
         <div
@@ -32,7 +32,7 @@ const Channels = () => {
       {randomImages.map((img, idx) => (
         <div
           onClick={() => setSelectedChannel(idx)}
-          className="my-4 flex items-center gap-4"
+          className="my-4 flex items-center gap-4 pr-4 cursor-pointer"
           key={idx}
         >
           <div

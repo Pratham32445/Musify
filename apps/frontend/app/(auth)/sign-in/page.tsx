@@ -9,7 +9,7 @@ import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import axios from "axios";
 import { toast } from "sonner";
-
+import { signIn } from "next-auth/react";
 
 const oAuthLoginData = [
   {
@@ -64,7 +64,7 @@ const SignIn = () => {
     <div
       className="w-full min-h-screen pt-10"
       style={{
-        background:
+        background: 
           "linear-gradient(rgba(255, 255, 255, 0.1) 0%, rgb(0, 0, 0) 100%);",
         boxShadow: "rgba(0, 0, 0, 0.24) 0px 3px 8px;",
       }}
@@ -79,6 +79,11 @@ const SignIn = () => {
             <div
               className="flex justify-center items-center gap-5 border-1 w-[300px] p-2 px-8 border-white rounded-full my-2 cursor-pointer hover:bg-neutral-900"
               key={idx}
+              onClick={() =>
+                signIn("google", {
+                  callbackUrl: "/rooms/explore",
+                })
+              }
             >
               {icon}
               <p className="font-bold">{title}</p>
@@ -107,7 +112,10 @@ const SignIn = () => {
               onChange={(e) => setPassword(e.target.value)}
             />
           </div>
-          <Button onClick={signInUser} className="bg-[#1ed760] hover:bg-[#3be477] p-7 my-4 w-full rounded-full cursor-pointer text-white">
+          <Button
+            onClick={signInUser}
+            className="bg-[#1ed760] hover:bg-[#3be477] p-7 my-4 w-full rounded-full cursor-pointer text-white"
+          >
             Continue
           </Button>
           <p className="text-sm">
