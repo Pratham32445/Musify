@@ -3,8 +3,8 @@ import { UserManager } from "./Managers/UserManager"
 
 const wss = new WebSocketServer({ port: 8080 })
 
-const USER_ID = "ABC";
-
-wss.on("connection", (ws) => {
-    UserManager.getInstance().addUser(USER_ID, ws);
+wss.on("connection", (ws, req) => {
+    const user_Id = new URLSearchParams(req.url?.split("?")[1]).get("roomId");
+    if (!user_Id) return;
+    UserManager.getInstance().addUser(user_Id, ws);
 })

@@ -3,7 +3,10 @@ import { RoomManager } from "./Managers/RoomManager";
 
 interface Message {
     type: string;
-    payload: {}
+    payload: {
+        roomId?: string;
+        adminId?: string;
+    }
 }
 
 export class User {
@@ -17,13 +20,21 @@ export class User {
     initHandlers() {
         this.ws.onmessage = (event) => {
             const message: Message = JSON.parse(event.data.toString());
-            const roomId = "abc";
+            const roomId = message.payload.roomId!;
             if (message.type == "createRoom") {
                 RoomManager.getInstance().createRoom(roomId, this.userId);
             }
-            else if (message.type == "addUser") {
-                const room = RoomManager.getInstance().getRoom(roomId)
-                if(room) room.addUser(this);
+            else if (message.type == "joinRoom") {
+                let room = RoomManager.getInstance().getRoom(roomId)
+                if (!room) {
+                    RoomManager.getInstance().createRoom(roomId, message.payload.adminId!);
+                    room = RoomManager.getInstance().getRoom(roomId);
+                }
+                if (!this.userId || !room) return;
+                const isUser = room.subscribers.find((subscriber) => subscriber.userId == this.userId);
+                if (!isUser) {
+                    room.addUser(this);
+                }
             }
         }
     }

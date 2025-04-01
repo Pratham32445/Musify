@@ -12,6 +12,7 @@ import { Switch } from "@/components/ui/switch";
 import { Button } from "./ui/button";
 import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
+import { useRouter } from "next/navigation";
 
 const CreateRoom = ({
   open,
@@ -20,6 +21,7 @@ const CreateRoom = ({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const router = useRouter();
   const [roomObj, setRoomObj] = useState({
     Name: "",
     isPrivate: false,
@@ -45,7 +47,7 @@ const CreateRoom = ({
         thumbnail: "",
       });
       const tokenData = await axios.get("/api/token");
-      await axios.post(
+      const room = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL!}/room/create-room`,
         roomObj,
         {
@@ -54,12 +56,14 @@ const CreateRoom = ({
           },
         }
       );
-      toast.success("Room Created",{
-        position : "top-right",
-        style : {
-            backgroundColor : "#1ed760"
-        }
+      toast.success("Room Created", {
+        position: "top-right",
+        style: {
+          backgroundColor: "#1ed760",
+        },
       });
+      setOpen(false);
+      router.push(`/rooms/me/${room.data.roomId}`)
     } catch (error) {
       if (isAxiosError(error)) {
         setErrors(error.response?.data.errors);
