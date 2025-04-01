@@ -6,7 +6,8 @@
     "dev" : "bun run index.ts"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "comman" : "*"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"

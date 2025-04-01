@@ -1,4 +1,5 @@
-import React from "react";
+"use client";
+import React, { useState } from "react";
 import {
   Dialog,
   DialogContent,
@@ -8,6 +9,9 @@ import {
 } from "@/components/ui/dialog";
 import { Input } from "../ui/input";
 import { Button } from "../ui/button";
+import { UseRoomId, useWs } from "@/store/Store";
+import { toast } from "sonner";
+import { WsMessage } from "comman/message";
 
 const AddSong = ({
   open,
@@ -16,6 +20,20 @@ const AddSong = ({
   open: boolean;
   setOpen: (open: boolean) => void;
 }) => {
+  const { ws } = useWs();
+  const { roomId } = UseRoomId();
+  const [url, setUrl] = useState("");
+  function addSong() {
+    const regex =
+      /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:watch\?v=|embed\/|v\/|shorts\/)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+    if (!url.match(regex)) {
+      toast.error("Please provide the valid youtube url");
+      return;
+    }
+    ws?.send(JSON.stringify({ type: WsMessage.addSong, payload: { url } }));
+    setUrl("");
+    setOpen(false);
+  }
   return (
     <Dialog open={open} onOpenChange={(value) => setOpen(value)}>
       <DialogContent>
@@ -26,8 +44,14 @@ const AddSong = ({
             rank according to the upvotes
           </DialogDescription>
         </DialogHeader>
-        <Input placeholder="Paste Youtube Link Here..." />
-        <Button className="bg-[#1ed760] cursor-pointer hover:bg-[#77ff75]">
+        <Input
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="Paste Youtube Link Here..."
+        />
+        <Button
+          onClick={addSong}
+          className="bg-[#1ed760] cursor-pointer hover:bg-[#77ff75]"
+        >
           Add Song
         </Button>
       </DialogContent>

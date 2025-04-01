@@ -1,10 +1,13 @@
 import { WebSocket } from "ws";
 import { RoomManager } from "./Managers/RoomManager";
+import { WsMessage } from "comman/message";
+import { getRequestUrl } from "./utils";
 
 interface Message {
     type: string;
     payload: {
         roomId?: string;
+        url?: string;
         adminId?: string;
     }
 }
@@ -18,13 +21,14 @@ export class User {
         this.initHandlers();
     }
     initHandlers() {
-        this.ws.onmessage = (event) => {
+        this.ws.onmessage = async (event) => {
             const message: Message = JSON.parse(event.data.toString());
-            const roomId = message.payload.roomId!;
             if (message.type == "createRoom") {
+                const roomId = message.payload.roomId!;
                 RoomManager.getInstance().createRoom(roomId, this.userId);
             }
             else if (message.type == "joinRoom") {
+                const roomId = message.payload.roomId!;
                 let room = RoomManager.getInstance().getRoom(roomId)
                 if (!room) {
                     RoomManager.getInstance().createRoom(roomId, message.payload.adminId!);
@@ -35,6 +39,15 @@ export class User {
                 if (!isUser) {
                     room.addUser(this);
                 }
+            }
+            else if (message.type == WsMessage.addSong) {
+                const reqUrl = getRequestUrl(message.payload.url!);
+                if (!reqUrl) return;
+                const res = await fetch(reqUrl);
+                const data = await res.json();
+                console.log(data.items[0].snippet);
+                console.log(data.items[0].contentDetails);
+                console.log(data.items[0].statistics);
             }
         }
     }

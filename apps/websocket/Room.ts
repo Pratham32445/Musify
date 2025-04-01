@@ -1,10 +1,11 @@
 import type { User } from "./User";
 
 interface Song {
-    Id: string;
-    link: string;
-    upvotes: string[];
-    duration: number;
+    title : string;
+    description : string;
+    thumbnail : string;
+    duration : number;
+    
 }
 
 export class Room {
