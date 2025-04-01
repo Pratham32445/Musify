@@ -18,22 +18,24 @@ model User {
   firstName    String
   lastName     String?
   email        String
-  password     String
+  password     String?
   isVerified   Boolean  @default(false)
   profileImage String?
   bio          String?
-  roomsAdmin   Rooms[]
+  roomsAdmin   Room[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
-model Rooms {
+model Room {
   Id          String   @id @default(uuid())
   Name        String
   adminId     String
   thumbnail   String?
+  isPrivate   Boolean  @default(false)
   admin       User     @relation(fields: [adminId], references: [Id])
   subscribers String[]
+  subadmins   String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 }

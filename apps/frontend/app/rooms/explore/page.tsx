@@ -5,8 +5,12 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import ExploreRooms from "@/components/ExploreRooms";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/app/api/auth/[...nextauth]/Options";
 
-const Explore = () => {
+const Explore = async () => {
+  const session = await getServerSession(authOptions);
+  console.log(session);
   return (
     <ResizablePanelGroup className="min-h-screen" direction="horizontal">
       <ResizablePanel defaultSize={25}>one</ResizablePanel>
@@ -16,6 +20,6 @@ const Explore = () => {
       </ResizablePanel>
     </ResizablePanelGroup>
   );
-};
+};  
 
 export default Explore;

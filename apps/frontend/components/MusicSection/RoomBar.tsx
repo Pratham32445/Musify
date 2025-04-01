@@ -4,24 +4,37 @@ const roomBarData = [
   {
     title: "chat",
     items: [
-      { name: "General", to: "/general" },
-      { name: "Live chat", to: "/live-chat" },
+      { name: "# General", to: "/general" },
+      { name: "# Live chat", to: "/live-chat" },  
+    ],
+  },
+  {
+    title: "songs",
+    items: [
+      { name: "# Last Played", to: "/general" },
     ],
   },
   {
     title: "call",
-    items: [{ name: "Group call", to: "/group-call" }],
+    items: [{ name: "# Group call", to: "/group-call" }],
   },
   {
     title: "users",
     items: [
-      { name: "all users", to: "/all-users" },
-      { name: "online users", to: "/online-users" },
+      { name: "# all users", to: "/all-users" },
+      { name: "# online users", to: "/online-users" },
+    ],
+  },
+  {
+    title: "admins",
+    items: [
+      { name: "# admin", to: "/all-users" },
+      { name: "# subadmins", to: "/online-users" },
     ],
   },
   {
     title: "Settings",
-    items: [{ name: "Group Settings", to: "/settings" }],
+    items: [{ name: "# Group Settings", to: "/settings" }],
   },
 ];
 

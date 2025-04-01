@@ -1,7 +1,8 @@
 "use client";
 import Image from "next/image";
 import React, { useState } from "react";
-import { User } from "lucide-react";
+import { User, Plus } from "lucide-react";
+import CreateRoom from "./CreateRoom";
 
 const randomImages = [
   "https://picsum.photos/800/600?random=1",
@@ -16,6 +17,7 @@ const randomImages = [
 
 const Channels = () => {
   const [selectedChannel, setSelectedChannel] = useState(-1);
+  const [open, setOpen] = useState(false);
   return (
     <div className="mt-10">
       <div
@@ -47,6 +49,14 @@ const Channels = () => {
           />
         </div>
       ))}
+      <div
+        className="my-4 ml-5 p-2 
+      cursor-pointer bg-[#34ff7b] w-fit rounded"
+        onClick={() => setOpen(true)}
+      >
+        <Plus />
+      </div>
+      <CreateRoom open={open} setOpen={setOpen} />
     </div>
   );
 };

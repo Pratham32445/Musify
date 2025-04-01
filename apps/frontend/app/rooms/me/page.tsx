@@ -1,30 +1,24 @@
-import Channels from "@/components/Channels";
-import MusicSection from "@/components/MusicSection/MusicSection";
-import RoomBar from "@/components/MusicSection/RoomBar";
-import {
-  ResizableHandle,
-  ResizablePanel,
-  ResizablePanelGroup,
-} from "@/components/ui/resizable";
+import RoomCard from "@/components/RoomCard";
+import { Input } from "@/components/ui/input";
 import React from "react";
-  
-const Me = () => {
+
+const page = () => {
   return (
-    <div className="flex w-full min-h-screen">
-      <Channels />
-      <div className="w-full">
-        <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={20}>
-            <RoomBar/>
-          </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={80}>
-            <MusicSection />
-          </ResizablePanel>
-        </ResizablePanelGroup>
+    <div className="max-w-3xl m-auto pt-20">
+      <div>
+        <p className="my-3">Search Rooms</p>
+        <Input type="text" placeholder="Write Room Name... or Id" />
+      </div>
+      <div className="my-16">
+        <p className="my-3">Trending Rooms...</p>
+        <div className="flex flex-wrap gap-8">
+          <RoomCard />
+          <RoomCard />  
+          <RoomCard />
+        </div>
       </div>
     </div>
   );
 };
 
-export default Me;
+export default page;
