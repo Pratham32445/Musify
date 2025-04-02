@@ -1,12 +1,7 @@
 import type { User } from "./User";
+import { WsMessage } from "comman/message"
+import type { Song } from "comman/shared-types"
 
-interface Song {
-    title : string;
-    description : string;
-    thumbnail : string;
-    duration : number;
-    
-}
 
 export class Room {
     roomId: string;
@@ -34,6 +29,22 @@ export class Room {
     }
     addSong(songInfo: Song) {
         this.playBackQueue.push(songInfo);
+        const message = {
+            type: WsMessage.newSongUpdate,
+            payload: {
+                songInfo
+            }
+        }
+        this.sendUpdate(message);
+    }
+    upvote(songId: string, userId: string) {
+        const song = this.playBackQueue.find((song) => song.id == songId);
+        if (song && !song.upvotes.has(userId)) {
+            song.upvotes.add(userId);
+            song.upvotesLength = song.upvotes.size;
+            console.log(this.playBackQueue);
+            this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue }})
+        }
     }
     pause(adminId: string) {
         if (this.adminId != adminId) return;
@@ -44,9 +55,9 @@ export class Room {
             if (this.subscribers.length == 0) this.isRoomActive = false;
         }, 2000)
     }
-    sendUpdate(payload: any) {
+    sendUpdate(message: any) {
         this.subscribers.forEach((subscriber) => {
-            subscriber.ws.send(payload);
+            subscriber.ws.send(JSON.stringify(message));
         })
     }
 }

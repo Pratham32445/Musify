@@ -7,12 +7,14 @@ import LiveChat from "./LiveChat";
 
 const MusicSection = () => {
   const [showChat, setShowChat] = useState(false);
-  return (    
+  return (
     <div className="flex">
-      <ScrollArea className="bg-[#121212] h-[calc(100vh-4rem)] m-8 rounded-xl overflow-hidden w-full">
-        <MusicBar setShowChat={setShowChat} />
+      <div className="bg-[#121212] h-[3/4] flex flex-col m-8 rounded-xl overflow-hidden w-full">
+        <div>
+          <MusicBar setShowChat={setShowChat} />
+        </div>
         <SongQueue />
-      </ScrollArea>
+      </div>
       {showChat && <LiveChat />}
     </div>
   );

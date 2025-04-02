@@ -14,7 +14,7 @@ const MusicBar = ({setShowChat} : {setShowChat : (showChat : boolean)=> void}) =
   return (
     <div>
       <div className="relative bg-[#981008] p-5">
-        <div className="absolute left-0 right-0 bottom-0 h-32 bg-gradient-to-t from-black to-transparent opacity-60 pointer-events-none"></div>
+        <div className="absolute left-0 right-0 bottom-0 h-24 bg-gradient-to-t from-black to-transparent opacity-60 pointer-events-none"></div>
 
         <div className="absolute left-0 right-0 bottom-0 h-20 w-full pointer-events-none">
           <div className="w-1/4 h-20 bg-gradient-to-t from-black to-transparent absolute left-0 opacity-40 animate-pulse"></div>

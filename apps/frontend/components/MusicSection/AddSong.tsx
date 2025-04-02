@@ -30,7 +30,9 @@ const AddSong = ({
       toast.error("Please provide the valid youtube url");
       return;
     }
-    ws?.send(JSON.stringify({ type: WsMessage.addSong, payload: { url } }));
+    ws?.send(
+      JSON.stringify({ type: WsMessage.addSong, payload: { roomId, url } })
+    );
     setUrl("");
     setOpen(false);
   }

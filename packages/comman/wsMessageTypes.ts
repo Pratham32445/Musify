@@ -1,5 +1,8 @@
 export const WsMessage = {
     joinRoom: "JoinRoom",
     leaveRoom: "LeaveRoom",
-    addSong : "addSong"
+    addSong : "addSong",
+    newSongUpdate : "newSonUpdate",
+    upVote : "upVote",
+    QueueUpdate : "QueueUpdate"
 }

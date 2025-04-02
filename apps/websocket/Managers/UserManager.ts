@@ -14,7 +14,6 @@ export class UserManager {
     }
     addUser(userId: string, ws: WebSocket) {
         if (this.users.has(userId)) return;
-        console.log("connected")
         const newUser = new User(userId, ws);
         this.users.set(userId, newUser);
     }

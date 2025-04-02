@@ -19,6 +19,7 @@ export class RoomManager {
         if(this.rooms.has(roomId)) this.rooms.delete(roomId);
     }
     getRoom(roomId: string) {
+        console.log(this.rooms);
         if (this.rooms.has(roomId)) return this.rooms.get(roomId);
         return null;
     }   
