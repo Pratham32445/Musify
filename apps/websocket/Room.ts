@@ -11,7 +11,9 @@ export class Room {
     isRoomActive: boolean;
     isPlaying: boolean;
     currentPlayingSong: Song | null;
+    playBackInterval: NodeJS.Timeout | null;
     currentSongSeek: number;
+    lastSeekUpdateTime: number;
 
     constructor(roomId: string, adminId: string) {
         this.roomId = roomId;
@@ -21,12 +23,30 @@ export class Room {
         this.isRoomActive = true;
         this.isPlaying = false;
         this.currentPlayingSong = null;
+        this.playBackInterval = null;
         this.currentSongSeek = 0;
+        this.lastSeekUpdateTime = Date.now();
     }
 
     addUser(user: User) {
         this.subscribers.push(user);
-        this.sendUpdate({ type: "new_user", payload: { user } })
+        this.sendUpdate({ type: WsMessage.newUserJoined, payload: { user } })
+        if (this.currentPlayingSong) {
+            const payload = {
+                ...this.currentPlayingSong,
+                isPlaying: this.currentPlayingSong,
+            }
+            user.ws.send(JSON.stringify({
+                type: WsMessage.currentSong,
+                payload
+            }))
+        }
+        user.ws.send(JSON.stringify({
+            type: WsMessage.QueueUpdate,
+            payload: {
+                Queue: this.playBackQueue
+            }
+        }))
     }
     removeUser(user: User) {
         this.subscribers = this.subscribers.filter((subscriber) => subscriber.userId != user.userId);
@@ -52,43 +72,52 @@ export class Room {
         if (song && !song.upvotes.has(userId)) {
             song.upvotes.add(userId);
             song.upvotesLength = song.upvotes.size;
-            console.log(this.playBackQueue);
+            this.playBackQueue.sort((a, b) => b.upvotesLength - a.upvotesLength);
             this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue } })
         }
     }
-    pause(adminId: string) {
-        if (this.adminId != adminId) return;
+    seek(userId: string, seekTime: number) {
+        if (userId != this.adminId) return;
+        this.currentSongSeek = seekTime;
+        this.sendUpdate({
+            type: WsMessage.seekUpdate,
+            payload: {
+                currentSeek: this.currentSongSeek
+            }
+        })
+    }
+    playSong() {
+        if (this.playBackQueue.length == 0) return;
+        this.currentPlayingSong = this.playBackQueue[0];
+        this.playBackQueue.shift();
+        this.currentSongSeek = 0;
         this.isPlaying = true;
+        const payload: CurrentPlayingSong = {
+            ...this.currentPlayingSong,
+            currentSeek: this.currentSongSeek,
+            isPlaying: true,
+            serverTimeStamp: Date.now()
+        }
+        this.sendUpdate({
+            type: WsMessage.currentSong,
+            payload
+        })
+        this.startPlayPlayBackInterval();
+    }
+    startPlayPlayBackInterval() {
+        
     }
     checkRoomStatus() {
         setInterval(() => {
-            if (this.subscribers.length == 0) this.isRoomActive = false;
-        }, 2000)
+            if (this.subscribers.length == 0) {
+                this.isRoomActive = false;
+
+            }
+        }, 10000);
     }
     sendUpdate(message: any) {
         this.subscribers.forEach((subscriber) => {
             subscriber.ws.send(JSON.stringify(message));
         })
-    }
-    playSong() {
-        this.currentPlayingSong = this.playBackQueue[0];
-        this.playBackQueue.shift();
-        const payload: CurrentPlayingSong = {
-            ...this.currentPlayingSong,
-            currentSeek: this.currentSongSeek
-        }
-        this.sendUpdate({
-            type: WsMessage.currentSong, payload
-        })
-
-        this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue } })
-
-        let interval = setInterval(() => {
-            this.currentSongSeek++;
-            if (this.currentSongSeek > this.currentPlayingSong!.duration!) {
-                clearInterval(interval);
-                if (this.playBackQueue.length > 0) this.playSong();
-            }
-        }, 1000);
     }
 }

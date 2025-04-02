@@ -52,13 +52,15 @@ export class User {
                 const data = await res.json();
                 const songInfo: Song = {
                     id: data.items[0].id,
+                    url : message.payload.url!,
                     title: data.items[0].snippet.title,
                     description: data.items[0].snippet.description,
                     thumbnail: data.items[0].snippet.thumbnails.high.url,
                     duration: 10,
                     views: Number(data.items[0].statistics.viewCount),
                     upvotes: new Set(),
-                    upvotesLength: 0
+                    upvotesLength: 0,
+                    isPlaying : false
                 }
                 const room = RoomManager.getInstance().getRoom(roomId!)
                 room?.addSong(songInfo);

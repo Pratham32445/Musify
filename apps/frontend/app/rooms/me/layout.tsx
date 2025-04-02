@@ -6,7 +6,7 @@ import {
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
 import React from "react";
-  
+    
 const Me = ({children} : {children : React.ReactNode}) => {
   return (
     <div className="flex w-full min-h-screen">

@@ -5,5 +5,7 @@ export const WsMessage = {
     newSongUpdate : "newSonUpdate",
     upVote : "upVote",
     QueueUpdate : "QueueUpdate",
-    currentSong : "currentSong"
+    currentSong : "currentSong",
+    newUserJoined : "newUserJoined",
+    seekUpdate : "seekUpdate"
 }
