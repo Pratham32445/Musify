@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { Song } from "comman/shared-types"
+import { CurrentPlayingSong, Song } from "comman/shared-types"
 
 interface webSocketInstance {
     ws: WebSocket | null,
@@ -13,8 +13,18 @@ interface selectedRoomId {
 
 interface SongQueue {
     queue: Song[],
-    setNewSong : (song : Song) => void;
-    setQueue: (queue : Song[]) => void;
+    setNewSong: (song: Song) => void;
+    setQueue: (queue: Song[]) => void;
+}
+
+interface ShowChat {
+    show: boolean;
+    setShowChat: (show: boolean) => void;
+}
+
+interface CurrentSong {
+    song: CurrentPlayingSong | null;
+    setCurrentSong: (song: CurrentPlayingSong) => void;
 }
 
 export const useWs = create<webSocketInstance>((set) => ({
@@ -38,7 +48,21 @@ export const useQueue = create<SongQueue>((set) => ({
             queue: [...prev.queue, song]
         }))
     },
-    setQueue : (queue : Song[]) => {
-        set({queue})
+    setQueue: (queue: Song[]) => {
+        set({ queue })
+    }
+}))
+
+export const useShowChat = create<ShowChat>((set) => ({
+    show: false,
+    setShowChat: (show: boolean) => {
+        set({ show })
+    }
+}))
+
+export const useCurrentSong = create<CurrentSong>((set) => ({
+    song: null,
+    setCurrentSong: (newSong: CurrentPlayingSong) => {
+        set({ song: newSong })
     }
 }))

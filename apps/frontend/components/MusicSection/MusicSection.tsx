@@ -1,21 +1,21 @@
 "use client";
-import React, { useState } from "react";
+import React from "react";
 import MusicBar from "./MusicBar";
 import SongQueue from "./SongQueue";
-import { ScrollArea } from "@/components/ui/scroll-area";
 import LiveChat from "./LiveChat";
+import { useShowChat } from "@/store/Store";
 
 const MusicSection = () => {
-  const [showChat, setShowChat] = useState(false);
+  const { show } = useShowChat();
   return (
     <div className="flex">
       <div className="bg-[#121212] h-[3/4] flex flex-col m-8 rounded-xl overflow-hidden w-full">
         <div>
-          <MusicBar setShowChat={setShowChat} />
+          <MusicBar />
         </div>
         <SongQueue />
       </div>
-      {showChat && <LiveChat />}
+      {show && <LiveChat />}
     </div>
   );
 };

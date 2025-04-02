@@ -4,5 +4,6 @@ export const WsMessage = {
     addSong : "addSong",
     newSongUpdate : "newSonUpdate",
     upVote : "upVote",
-    QueueUpdate : "QueueUpdate"
+    QueueUpdate : "QueueUpdate",
+    currentSong : "currentSong"
 }

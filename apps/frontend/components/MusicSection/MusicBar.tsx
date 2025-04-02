@@ -5,12 +5,12 @@ import { FaMusic, FaVideo } from "react-icons/fa";
 import { CirclePlus } from "lucide-react";
 import AddSong from "./AddSong";
 import { BsChatLeftTextFill } from "react-icons/bs";
+import { useCurrentSong, useShowChat } from "@/store/Store";
 
-const MusicBar = ({setShowChat} : {setShowChat : (showChat : boolean)=> void}) => {
-
+const MusicBar = () => {
   const [type, setType] = useState(0);
   const [open, setOpen] = useState(false);
-
+  const { setShowChat } = useShowChat();
   return (
     <div>
       <div className="relative bg-[#981008] p-5">

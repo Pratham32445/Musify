@@ -11,7 +11,6 @@ const SongQueueCard = ({ song }: { song: Song }) => {
   const { ws } = useWs();
   const { roomId } = UseRoomId();
   const { data } = useSession();
-  console.log(song);
   function upVoteSong(songId: string) {
     if (data?.user.id && ws) {
       ws.send(

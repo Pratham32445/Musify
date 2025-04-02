@@ -1,6 +1,6 @@
 import type { User } from "./User";
 import { WsMessage } from "comman/message"
-import type { Song } from "comman/shared-types"
+import type { CurrentPlayingSong, Song } from "comman/shared-types"
 
 
 export class Room {
@@ -10,6 +10,8 @@ export class Room {
     playBackQueue: Song[];
     isRoomActive: boolean;
     isPlaying: boolean;
+    currentPlayingSong: Song | null;
+    currentSongSeek: number;
 
     constructor(roomId: string, adminId: string) {
         this.roomId = roomId;
@@ -17,8 +19,11 @@ export class Room {
         this.subscribers = [];
         this.playBackQueue = [];
         this.isRoomActive = true;
-        this.isPlaying = true;
+        this.isPlaying = false;
+        this.currentPlayingSong = null;
+        this.currentSongSeek = 0;
     }
+
     addUser(user: User) {
         this.subscribers.push(user);
         this.sendUpdate({ type: "new_user", payload: { user } })
@@ -36,6 +41,11 @@ export class Room {
             }
         }
         this.sendUpdate(message);
+        if (this.playBackQueue.length == 1 && this.currentPlayingSong == null) {
+            setTimeout(() => {
+                this.playSong();
+            }, 2000)
+        }
     }
     upvote(songId: string, userId: string) {
         const song = this.playBackQueue.find((song) => song.id == songId);
@@ -43,7 +53,7 @@ export class Room {
             song.upvotes.add(userId);
             song.upvotesLength = song.upvotes.size;
             console.log(this.playBackQueue);
-            this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue }})
+            this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue } })
         }
     }
     pause(adminId: string) {
@@ -59,5 +69,26 @@ export class Room {
         this.subscribers.forEach((subscriber) => {
             subscriber.ws.send(JSON.stringify(message));
         })
+    }
+    playSong() {
+        this.currentPlayingSong = this.playBackQueue[0];
+        this.playBackQueue.shift();
+        const payload: CurrentPlayingSong = {
+            ...this.currentPlayingSong,
+            currentSeek: this.currentSongSeek
+        }
+        this.sendUpdate({
+            type: WsMessage.currentSong, payload
+        })
+
+        this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue } })
+
+        let interval = setInterval(() => {
+            this.currentSongSeek++;
+            if (this.currentSongSeek > this.currentPlayingSong!.duration!) {
+                clearInterval(interval);
+                if (this.playBackQueue.length > 0) this.playSong();
+            }
+        }, 1000);
     }
 }

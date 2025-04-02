@@ -10,8 +10,8 @@ interface Message {
         roomId?: string;
         url?: string;
         adminId?: string;
-        songId? : string;
-        userId? : string;
+        songId?: string;
+        userId?: string;
     }
 }
 
@@ -58,15 +58,15 @@ export class User {
                     duration: 10,
                     views: Number(data.items[0].statistics.viewCount),
                     upvotes: new Set(),
-                    upvotesLength : 0
+                    upvotesLength: 0
                 }
                 const room = RoomManager.getInstance().getRoom(roomId!)
                 room?.addSong(songInfo);
             }
-            else if(message.type == WsMessage.upVote) {
+            else if (message.type == WsMessage.upVote) {
                 const room = RoomManager.getInstance().getRoom(message.payload.roomId!);
-                if(room) {
-                    room.upvote(message.payload.songId!,message.payload.userId!)
+                if (room) {
+                    room.upvote(message.payload.songId!, message.payload.userId!)
                 }
             }
         }

@@ -3,14 +3,15 @@ import MusicSection from "@/components/MusicSection/MusicSection";
 import { useEffect } from "react";
 import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
-import { useQueue, UseRoomId, useWs } from "@/store/Store";
+import { useCurrentSong, useQueue, UseRoomId, useWs } from "@/store/Store";
 import { WsMessage } from "comman/message";
 import { useSession } from "next-auth/react";
 
 const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
   const { setWs, ws } = useWs();
-  const { setQueue,setNewSong} = useQueue();
+  const { setQueue, setNewSong } = useQueue();
   const { setRoomId } = UseRoomId();
+  const { setCurrentSong } = useCurrentSong();
   const { data } = useSession();
   useEffect(() => {
     async function joinRoom() {
@@ -32,16 +33,19 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
           };
           ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            console.log(message);
             if (message.type == WsMessage.newSongUpdate) {
               setNewSong(message.payload.songInfo);
+              const audio = new Audio("/notification.mp3");
+              audio.play();
             } else if (message.type == WsMessage.QueueUpdate) {
               setQueue(message.payload.Queue);
-              console.log(message.payload.Queue);
+            } else if (message.type == WsMessage.currentSong) {
+              setCurrentSong(message.payload);
             }
           };
         }
       } catch (error) {
+        console.log(error);
         if (isAxiosError(error)) {
           toast.error(error.response?.data.message);
         }
