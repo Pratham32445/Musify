@@ -2,7 +2,6 @@ import type { User } from "./User";
 import { WsMessage } from "comman/message"
 import type { CurrentPlayingSong, Song } from "comman/shared-types"
 
-
 export class Room {
     roomId: string;
     adminId: string;
@@ -42,6 +41,12 @@ export class Room {
             }))
         }
         user.ws.send(JSON.stringify({
+            type: WsMessage.meJoined,
+            payload: {
+                success: true
+            }
+        }))
+        user.ws.send(JSON.stringify({
             type: WsMessage.QueueUpdate,
             payload: {
                 Queue: this.playBackQueue
@@ -53,6 +58,7 @@ export class Room {
         this.sendUpdate({ type: "remove_user", payload: { Id: user.userId } });
     }
     addSong(songInfo: Song) {
+        console.log(songInfo);
         this.playBackQueue.push(songInfo);
         const message = {
             type: WsMessage.newSongUpdate,
@@ -82,7 +88,8 @@ export class Room {
         this.sendUpdate({
             type: WsMessage.seekUpdate,
             payload: {
-                currentSeek: this.currentSongSeek
+                currentSeek: this.currentSongSeek,
+                timeStamp: Date.now()
             }
         })
     }
@@ -102,10 +109,44 @@ export class Room {
             type: WsMessage.currentSong,
             payload
         })
+        this.sendUpdate({
+            type: WsMessage.QueueUpdate,
+            payload: {
+                Queue: this.playBackQueue
+            }
+        })
         this.startPlayPlayBackInterval();
     }
     startPlayPlayBackInterval() {
-        
+        if (this.playBackInterval) {
+            clearInterval(this.playBackInterval)
+        }
+        this.playBackInterval = setInterval(() => {
+            this.currentSongSeek++;
+            if (this.currentSongSeek % 5 == 0) {
+                this.sendUpdate({
+                    type: WsMessage.syncUpdate,
+                    payload: {
+                        currentSeek: this.currentSongSeek,
+                        timeStamp: Date.now()
+                    }
+                })
+            }
+            if (this.currentPlayingSong && this.currentSongSeek >= this.currentPlayingSong.duration) {
+                this.endCurrentSong();
+            }
+        }, 1000)
+    }
+    endCurrentSong() {
+        if (this.playBackInterval) {
+            clearInterval(this.playBackInterval);
+            this.playBackInterval = null;
+        }
+        this.currentPlayingSong = null;
+        this.currentSongSeek = 0;
+        if (this.playBackQueue.length > 0) {
+            this.playSong();
+        }
     }
     checkRoomStatus() {
         setInterval(() => {

@@ -26,8 +26,64 @@ router.post("/create-room", authMiddleware, async (req, res) => {
         }
     })
     res.json({
-        roomId : room.Id,
+        roomId: room.Id,
         message: "Room Created"
+    })
+})
+
+router.get("/get-rooms", authMiddleware, async (req, res) => {
+    const userId = req.userId;
+    const userAsAdminRooms = await prismaClient.room.findMany({
+        where: {
+            adminId: userId!
+        }
+    })
+    const userRooms = await prismaClient.user.findFirst({
+        where: {
+            Id: userId!
+        },
+        select: {
+            rooms: true
+        }
+    })
+
+    res.json({
+        rooms: [...userAsAdminRooms, ...userRooms?.rooms!]
+    })
+})
+
+router.post("/joinRoom", authMiddleware, async (req, res) => {
+    const roomId = req.body.roomId;
+    const room = await prismaClient.room.findFirst({
+        where: {
+            Id: roomId
+        },
+        select: {
+            subscribers: true
+        }
+    })
+    console.log(room);
+    if (!room) {
+        res.status(404).json({
+            message: "Room not found"
+        })
+        return;
+    }
+    const isFound = room?.subscribers.find((subscriber) => subscriber.Id == req.userId);
+    if (isFound) {
+        res.status(401).json({
+            message: "You are Already Member of this group"
+        })
+        return;
+    }
+    const user = await prismaClient.user.findFirst({
+        where: {
+            Id: req.userId
+        }
+    })
+    room?.subscribers.push(user!);
+    res.json({
+        message: "Joined Successfully"
     })
 })
 

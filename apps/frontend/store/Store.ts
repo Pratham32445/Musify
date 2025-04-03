@@ -27,6 +27,11 @@ interface CurrentSong {
     setCurrentSong: (song: CurrentPlayingSong) => void;
 }
 
+interface SeekUpdate {
+    seek: number,
+    updateSeek: (currentSeek: number) => void;
+}
+
 export const useWs = create<webSocketInstance>((set) => ({
     ws: null,
     setWs: (socket: WebSocket) => {
@@ -64,5 +69,12 @@ export const useCurrentSong = create<CurrentSong>((set) => ({
     song: null,
     setCurrentSong: (newSong: CurrentPlayingSong) => {
         set({ song: newSong })
+    }
+}))
+
+export const useSeekUpdate = create<SeekUpdate>((set) => ({
+    seek : 0,
+    updateSeek : (newSeekTime : number) => {
+        set({seek : newSeekTime})
     }
 }))

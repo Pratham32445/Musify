@@ -22,7 +22,7 @@ model User {
   isVerified   Boolean  @default(false)
   profileImage String?
   bio          String?
-  roomsAdmin   Room[]
+  rooms        Room[]
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
@@ -33,8 +33,7 @@ model Room {
   adminId     String
   thumbnail   String?
   isPrivate   Boolean  @default(false)
-  admin       User     @relation(fields: [adminId], references: [Id])
-  subscribers String[]
+  subscribers User[]
   subadmins   String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

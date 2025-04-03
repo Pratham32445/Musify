@@ -4,15 +4,14 @@ const roomBarData = [
   {
     title: "chat",
     items: [
+      { name: "# Home", to: "/Home" },
       { name: "# General", to: "/general" },
-      { name: "# Live chat", to: "/live-chat" },  
+      { name: "# Live chat", to: "/live-chat" },
     ],
   },
   {
     title: "songs",
-    items: [
-      { name: "# Last Played", to: "/general" },
-    ],
+    items: [{ name: "# Last Played", to: "/general" }],
   },
   {
     title: "call",

@@ -1,18 +1,27 @@
 "use client";
 import MusicSection from "@/components/MusicSection/MusicSection";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
-import { useCurrentSong, useQueue, UseRoomId, useWs } from "@/store/Store";
+import {
+  useCurrentSong,
+  useQueue,
+  UseRoomId,
+  useSeekUpdate,
+  useWs,
+} from "@/store/Store";
 import { WsMessage } from "comman/message";
 import { useSession } from "next-auth/react";
+import { LoaderCircle } from "lucide-react";
 
 const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
   const { setWs, ws } = useWs();
   const { setQueue, setNewSong } = useQueue();
   const { setRoomId } = UseRoomId();
   const { setCurrentSong } = useCurrentSong();
+  const { updateSeek } = useSeekUpdate();
   const { data } = useSession();
+  const [isJoined, setIsJoined] = useState(false);
   useEffect(() => {
     async function joinRoom() {
       try {
@@ -33,7 +42,10 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
           };
           ws.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            if (message.type == WsMessage.newSongUpdate) {
+            console.log(message);
+            if (message.type == WsMessage.meJoined) {
+              setIsJoined(true);
+            } else if (message.type == WsMessage.newSongUpdate) {
               setNewSong(message.payload.songInfo);
               const audio = new Audio("/notification.mp3");
               audio.play();
@@ -41,6 +53,12 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
               setQueue(message.payload.Queue);
             } else if (message.type == WsMessage.currentSong) {
               setCurrentSong(message.payload);
+            } else if (message.type == WsMessage.syncUpdate) {
+              const serverSeek = message.payload.currentSeek;
+              const serverTime = message.payload.timeStamp;
+              const timeDiff = (Date.now() - serverTime) / 1000;
+              const targetSeek = serverSeek + timeDiff;
+              updateSeek(targetSeek);
             }
           };
         }
@@ -54,7 +72,13 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
     joinRoom();
   }, [data]);
 
-  return <MusicSection />;
+  return isJoined ? (
+    <MusicSection />
+  ) : (
+    <div className="flex justify-center pt-32">
+      <LoaderCircle className="animate-spin" width={50} height={50} />
+    </div>
+  );
 };
 
 export default RoomMusic;

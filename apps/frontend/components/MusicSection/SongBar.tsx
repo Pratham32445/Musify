@@ -1,15 +1,31 @@
-import { useCurrentSong } from "@/store/Store";
+"use client";
+import { useCurrentSong, useSeekUpdate } from "@/store/Store";
 import Image from "next/image";
-import React, { useState } from "react";
-import { Play, Plus, MessageSquare } from "lucide-react";
+import React, { useEffect, useRef, useState } from "react";
+import { Play, Plus, MessageSquare, Eye, Clock } from "lucide-react";
 import { useShowChat } from "@/store/Store";
 import ReactPlayer from "react-player";
+import { formattedDuration, viewsFormatter } from "@/lib/time";
 
 const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const { song } = useCurrentSong();
   const [type, setType] = useState(0);
   const { setShowChat } = useShowChat();
+  const { seek } = useSeekUpdate();
   const [pause, setPause] = useState(false);
+  const playerRef = useRef<null | ReactPlayer>(null);
+
+  useEffect(() => {
+    if (playerRef.current) {
+      const currentTime = playerRef.current.getCurrentTime();
+      console.log(currentTime,seek);
+      if (Math.abs(currentTime - seek) > 1) {
+        playerRef.current.seekTo(seek, "seconds");
+      }
+    }
+  }, [seek]);
+
+
   return (
     <div
       className={`flex ${!song && "bg-[#34ff7b]"} items-center gap-10 w-full h-[400px] relative`}
@@ -38,13 +54,24 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                 <Play color="#000" className="cursor-pointer" />
               </div>
               <div>
-                <Plus />
+                <Plus
+                  className="cursor-pointer"
+                  onClick={() => setOpen(true)}
+                />
               </div>
               <div>
                 <MessageSquare
                   className="cursor-pointer"
                   onClick={() => setShowChat(true)}
                 />
+              </div>
+              <div className="flex items-center gap-2">
+                <Clock width={20} />
+                <p className="font-bold">{formattedDuration(song.duration)}</p>
+              </div>
+              <div className="flex items-center gap-2">
+                <Eye />
+                <p className="font-bold">{viewsFormatter(song.views)}</p>
               </div>
             </div>
           </div>
@@ -63,10 +90,11 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
       )}
       {song && (
         <div className="hidden">
-          <ReactPlayer 
-            url={song?.url} 
+          <ReactPlayer
+            url={song?.url}
             playing={true}
             controls={false}
+            ref={playerRef}
             width="0"
             height="0"
           />

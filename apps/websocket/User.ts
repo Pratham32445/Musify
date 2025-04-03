@@ -1,7 +1,7 @@
 import { WebSocket } from "ws";
 import { RoomManager } from "./Managers/RoomManager";
 import { WsMessage } from "comman/message";
-import { getRequestUrl } from "./utils";
+import { getRequestUrl, getSongDuration } from "./utils";
 import type { Song } from "comman/shared-types";
 
 interface Message {
@@ -26,8 +26,7 @@ export class User {
     initHandlers() {
         this.ws.onmessage = async (event) => {
             const message: Message = JSON.parse(event.data.toString());
-            console.log(message)
-            if (message.type == "createRoom") {
+            if (message.type == WsMessage.createRoom) {
                 const roomId = message.payload.roomId!;
                 RoomManager.getInstance().createRoom(roomId, this.userId);
             }
@@ -50,17 +49,18 @@ export class User {
                 if (!reqUrl) return;
                 const res = await fetch(reqUrl);
                 const data = await res.json();
+                const duration = getSongDuration(data.items[0].contentDetails.duration);
                 const songInfo: Song = {
                     id: data.items[0].id,
-                    url : message.payload.url!,
+                    url: message.payload.url!,
                     title: data.items[0].snippet.title,
                     description: data.items[0].snippet.description,
                     thumbnail: data.items[0].snippet.thumbnails.high.url,
-                    duration: 10,
+                    duration: duration,
                     views: Number(data.items[0].statistics.viewCount),
                     upvotes: new Set(),
                     upvotesLength: 0,
-                    isPlaying : false
+                    isPlaying: false
                 }
                 const room = RoomManager.getInstance().getRoom(roomId!)
                 room?.addSong(songInfo);

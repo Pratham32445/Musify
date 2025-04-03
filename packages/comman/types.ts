@@ -1,3 +1,4 @@
+
 export interface Song {
     id: string;
     url: string;
@@ -8,10 +9,22 @@ export interface Song {
     views: number;
     upvotes: Set<string>;
     upvotesLength: number;
-    isPlaying : boolean;
+    isPlaying: boolean;
 }
 
 export interface CurrentPlayingSong extends Song {
     currentSeek: number;
-    serverTimeStamp : number;
+    serverTimeStamp: number;
+}
+
+export interface Room {
+    Id : string;
+    Name: string;
+    adminId: string;
+    thumbnail: string;
+    isPrivate: boolean;
+    subscribers: any;
+    subadmins: String[];
+    createdAt: Date;
+    updatedAt: Date;
 }

@@ -6,6 +6,7 @@ import { Song } from "comman/shared-types";
 import { UseRoomId, useWs } from "@/store/Store";
 import { useSession } from "next-auth/react";
 import { WsMessage } from "comman/message";
+import { formattedDuration } from "@/lib/time";
 
 const SongQueueCard = ({ song }: { song: Song }) => {
   const { ws } = useWs();
@@ -56,7 +57,7 @@ const SongQueueCard = ({ song }: { song: Song }) => {
         </div>
       </div>
       <div className="w-1/4 flex justify-center items-center">
-        <p>{song.duration}</p>
+        <p>{formattedDuration(song.duration)}</p>
       </div>
     </div>
   );
