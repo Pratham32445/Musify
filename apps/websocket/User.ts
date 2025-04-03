@@ -2,7 +2,7 @@ import { WebSocket } from "ws";
 import { RoomManager } from "./Managers/RoomManager";
 import { WsMessage } from "comman/message";
 import { getRequestUrl, getSongDuration } from "./utils";
-import type { Song } from "comman/shared-types";
+import type { Song,Message as onMessage } from "comman/shared-types";
 
 interface Message {
     type: string;
@@ -12,6 +12,9 @@ interface Message {
         adminId?: string;
         songId?: string;
         userId?: string;
+        message? : string;
+        userName? :string;
+        time? : Date;
     }
 }
 
@@ -70,6 +73,16 @@ export class User {
                 if (room) {
                     room.upvote(message.payload.songId!, message.payload.userId!)
                 }
+            }
+            else if(message.type == WsMessage.sendMessage) {
+                const room = RoomManager.getInstance().getRoom(message.payload.roomId!);
+                const userMessage : onMessage = {
+                    message : message.payload.message!,
+                    userName : message.payload.userName!,
+                    time : message.payload.time!,
+                    userId : message.payload.userId!
+                }
+                room?.onMessage(userMessage)
             }
         }
     }

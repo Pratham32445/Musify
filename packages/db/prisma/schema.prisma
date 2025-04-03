@@ -14,26 +14,28 @@ datasource db {
 }
 
 model User {
-  Id           String   @id @default(uuid())
-  firstName    String
-  lastName     String?
-  email        String
-  password     String?
-  isVerified   Boolean  @default(false)
-  profileImage String?
-  bio          String?
-  rooms        Room[]
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
+  Id              String   @id @default(uuid())
+  firstName       String
+  lastName        String?
+  email           String
+  password        String?
+  isVerified      Boolean  @default(false)
+  profileImage    String?
+  bio             String?
+  ownedRooms      Room[]   @relation("AdminOfRooms")
+  subscribedRooms Room[]   @relation("SubscribedRooms")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
 
 model Room {
   Id          String   @id @default(uuid())
   Name        String
   adminId     String
+  admin       User     @relation("AdminOfRooms", fields: [adminId], references: [Id])
   thumbnail   String?
   isPrivate   Boolean  @default(false)
-  subscribers User[]
+  subscribers User[]   @relation("SubscribedRooms")
   subadmins   String[]
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt

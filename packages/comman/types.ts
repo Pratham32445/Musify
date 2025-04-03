@@ -28,3 +28,10 @@ export interface Room {
     createdAt: Date;
     updatedAt: Date;
 }
+
+export interface Message {
+    userId : string;
+    message : string;
+    userName : string;
+    time : Date;
+}

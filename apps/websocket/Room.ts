@@ -1,6 +1,6 @@
 import type { User } from "./User";
 import { WsMessage } from "comman/message"
-import type { CurrentPlayingSong, Song } from "comman/shared-types"
+import type { CurrentPlayingSong, Message, Song } from "comman/shared-types"
 
 export class Room {
     roomId: string;
@@ -13,6 +13,7 @@ export class Room {
     playBackInterval: NodeJS.Timeout | null;
     currentSongSeek: number;
     lastSeekUpdateTime: number;
+    messages : Message[];
 
     constructor(roomId: string, adminId: string) {
         this.roomId = roomId;
@@ -25,6 +26,7 @@ export class Room {
         this.playBackInterval = null;
         this.currentSongSeek = 0;
         this.lastSeekUpdateTime = Date.now();
+        this.messages = [];
     }
 
     addUser(user: User) {
@@ -50,6 +52,12 @@ export class Room {
             type: WsMessage.QueueUpdate,
             payload: {
                 Queue: this.playBackQueue
+            }
+        }))
+        user.ws.send(JSON.stringify({
+            type : WsMessage.initialMessages,
+            payload : {
+                messages : this.messages
             }
         }))
     }
@@ -159,6 +167,15 @@ export class Room {
     sendUpdate(message: any) {
         this.subscribers.forEach((subscriber) => {
             subscriber.ws.send(JSON.stringify(message));
+        })
+    }
+    onMessage(message: Message) {
+        this.messages.push(message);
+        this.sendUpdate({
+            type: WsMessage.onMessage,
+            payload: {
+                message
+            }
         })
     }
 }

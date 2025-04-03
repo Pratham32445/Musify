@@ -43,12 +43,13 @@ router.get("/get-rooms", authMiddleware, async (req, res) => {
             Id: userId!
         },
         select: {
-            rooms: true
+            ownedRooms: true,
+            subscribedRooms : true
         }
     })
 
     res.json({
-        rooms: [...userAsAdminRooms, ...userRooms?.rooms!]
+        rooms: [...userAsAdminRooms, ...userRooms!.subscribedRooms]
     })
 })
 

@@ -1,5 +1,5 @@
 import { create } from "zustand"
-import { CurrentPlayingSong, Song } from "comman/shared-types"
+import { CurrentPlayingSong, Message, Song } from "comman/shared-types"
 
 interface webSocketInstance {
     ws: WebSocket | null,
@@ -30,6 +30,12 @@ interface CurrentSong {
 interface SeekUpdate {
     seek: number,
     updateSeek: (currentSeek: number) => void;
+}
+
+interface UserMessages {
+    messages: Message[],
+    setMessage: (message: Message) => void
+    setInitialMessages: (messages: Message[]) => void;
 }
 
 export const useWs = create<webSocketInstance>((set) => ({
@@ -73,8 +79,20 @@ export const useCurrentSong = create<CurrentSong>((set) => ({
 }))
 
 export const useSeekUpdate = create<SeekUpdate>((set) => ({
-    seek : 0,
-    updateSeek : (newSeekTime : number) => {
-        set({seek : newSeekTime})
+    seek: 0,
+    updateSeek: (newSeekTime: number) => {
+        set({ seek: newSeekTime })
+    }
+}))
+
+export const useMessages = create<UserMessages>((set) => ({
+    messages: [],
+    setMessage: (message: Message) => {
+        set((prev) => ({
+            messages: [...prev.messages, message]
+        }))
+    },
+    setInitialMessages: (messages: Message[]) => {
+        set({ messages })
     }
 }))

@@ -5,6 +5,7 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
 import {
   useCurrentSong,
+  useMessages,
   useQueue,
   UseRoomId,
   useSeekUpdate,
@@ -21,6 +22,7 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
   const { setCurrentSong } = useCurrentSong();
   const { updateSeek } = useSeekUpdate();
   const { data } = useSession();
+  const { setMessage,setInitialMessages } = useMessages();
   const [isJoined, setIsJoined] = useState(false);
   useEffect(() => {
     async function joinRoom() {
@@ -59,6 +61,17 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
               const timeDiff = (Date.now() - serverTime) / 1000;
               const targetSeek = serverSeek + timeDiff;
               updateSeek(targetSeek);
+            }
+            else if(message.type == WsMessage.initialMessages) {
+              setInitialMessages(message.payload.messages);
+            } 
+            else if (message.type == WsMessage.onMessage) {
+              setMessage(message.payload.message);
+              console.log(message.payload.message);
+              if (message.payload.message.userId != data.user.id) {
+                const audio = new Audio("/notification.mp3");
+                audio.play();
+              }
             }
           };
         }

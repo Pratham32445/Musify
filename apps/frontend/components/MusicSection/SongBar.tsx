@@ -18,13 +18,12 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   useEffect(() => {
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime();
-      console.log(currentTime,seek);
       if (Math.abs(currentTime - seek) > 1) {
         playerRef.current.seekTo(seek, "seconds");
+        
       }
     }
   }, [seek]);
-
 
   return (
     <div
@@ -88,18 +87,23 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
           </p>
         </div>
       )}
-      {song && (
-        <div className="hidden">
-          <ReactPlayer
-            url={song?.url}
-            playing={true}
-            controls={false}
-            ref={playerRef}
-            width="0"
-            height="0"
-          />
-        </div>
-      )}
+      {song &&
+        (type == 0 ? (
+          <div className="hidden">
+            <ReactPlayer
+              url={song?.url}
+              playing={false}
+              controls={false}
+              ref={playerRef}
+              width="0"
+              height="0"
+            />
+          </div>
+        ) : (
+          <div>
+
+          </div>
+        ))}
     </div>
   );
 };

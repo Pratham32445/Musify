@@ -12,9 +12,11 @@ export function formattedDuration(duration: number) {
 }
 
 export function viewsFormatter(views : number) {
+    const billion = 1000000000;
     const million = 1000000;
     const thousand = 1000;
-    if(views >= million) return `${Math.floor(views/million)}M`;
+    if(views >= billion) return `${Math.floor(views/billion)}B`
+    else if(views >= million) return `${Math.floor(views/million)}M`;
     else if(views >= thousand) return `${Math.floor(views/thousand)}K`;
     return views;
 }

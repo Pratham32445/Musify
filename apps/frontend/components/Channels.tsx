@@ -5,7 +5,7 @@ import { User, Plus, LoaderCircle } from "lucide-react";
 import CreateRoom from "./CreateRoom";
 import axios from "axios";
 import { Room } from "comman/shared-types";
-import { useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";  
 
 const Channels = () => {
   const [selectedChannel, setSelectedChannel] = useState(-1);

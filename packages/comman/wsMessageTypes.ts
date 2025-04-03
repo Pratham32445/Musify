@@ -11,4 +11,7 @@ export const WsMessage = {
     newUserJoined: "newUserJoined",
     seekUpdate: "seekUpdate",
     syncUpdate: "syncUpdate",
+    sendMessage : "sendMessage",
+    onMessage : "onMessage",
+    initialMessages : "initialMessages"
 }
