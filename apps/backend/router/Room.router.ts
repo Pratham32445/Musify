@@ -44,7 +44,7 @@ router.get("/get-rooms", authMiddleware, async (req, res) => {
         },
         select: {
             ownedRooms: true,
-            subscribedRooms : true
+            subscribedRooms: true
         }
     })
 
@@ -63,7 +63,6 @@ router.post("/joinRoom", authMiddleware, async (req, res) => {
             subscribers: true
         }
     })
-    console.log(room);
     if (!room) {
         res.status(404).json({
             message: "Room not found"
@@ -82,7 +81,18 @@ router.post("/joinRoom", authMiddleware, async (req, res) => {
             Id: req.userId
         }
     })
-    room?.subscribers.push(user!);
+    await prismaClient.user.update({
+        where: {
+            Id: req.userId
+        },
+        data: {
+            subscribedRooms: {
+                connect: {
+                    Id: roomId
+                }
+            }
+        }
+    })
     res.json({
         message: "Joined Successfully"
     })
@@ -101,6 +111,21 @@ router.get("/isValid-room/:roomId", async (req, res) => {
     }
     res.json({
         message: "Success"
+    })
+})
+
+router.get("/get-songs/:roomId", async (req, res) => {
+    const { roomId } = req.params;
+    const songs = await prismaClient.room.findFirst({
+        where: {
+            Id: roomId
+        },
+        select: {
+            lastPlayed: true
+        }
+    })
+    res.json({
+        songs
     })
 })
 

@@ -1,9 +1,12 @@
 "use client";
-import { useShowChat } from "@/store/Store";
+import { UseRoomId, useShowChat } from "@/store/Store";
+import { useRouter } from "next/navigation";
 import React from "react";
 
 const RoomBar = () => {
   const { setShowChat } = useShowChat();
+  const { roomId } = UseRoomId();
+  const router = useRouter();
   const roomBarData = [
     {
       title: "chat",
@@ -23,7 +26,19 @@ const RoomBar = () => {
     },
     {
       title: "songs",
-      items: [{ name: "# Last Played", to: "/general" }],
+      items: [
+        {
+          name: "# Last Played",
+          to: "/general",
+          param: roomId,
+          func: (id: string) => {
+            router.push(`/rooms/me/${id}/last-played`);
+          },
+          onClick: (func: (id: string) => void, params: string) => {
+            func(params);
+          },
+        },
+      ],
     },
     {
       title: "call",
@@ -56,11 +71,7 @@ const RoomBar = () => {
           {items.map((item, idx) => (
             <div
               key={idx}
-              onClick={() =>
-                item.type == "click"
-                  ? item.func(item.param)
-                  : console.log("clicked")
-              }
+              onClick={() => item.func!(item.param)}
               className="my-1 cursor-pointer hover:bg-neutral-900 p-1"
             >
               <p className="text-neutral-400">{item.name}</p>

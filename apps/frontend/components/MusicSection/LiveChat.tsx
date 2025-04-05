@@ -23,7 +23,7 @@ const LiveChat = () => {
       JSON.stringify({
         type: WsMessage.sendMessage,
         payload: {
-          userId : data!.user.id!,
+          userId: data!.user.id!,
           roomId,
           message,
           userName: data?.user.name,
@@ -31,7 +31,7 @@ const LiveChat = () => {
         },
       })
     );
-    setMessage("")
+    setMessage("");
   }
 
   return (
@@ -43,15 +43,15 @@ const LiveChat = () => {
         </div>
         <hr className="mt-2" />
         <ScrollArea className="p-4 h-[380px]">
-          {messages.map(({ message, time, userName }, idx) => (
+          {messages.map(({ message, userName }, idx) => (
             <div
               key={idx}
-              className="flex items-start gap-4 bg-neutral-600 w-fit p-2 rounded mb-5"
-            >
+              className="flex items-start gap-4  bg-neutral-600 w-fit rounded mb-5 p-2"
+            > 
               <div className="bg-[#34ff7b] w-[30px] h-[30px] rounded-full flex justify-center items-center">
                 <p className="uppercase">{userName[0]}</p>
               </div>
-              <div>
+              <div className="w-full">
                 <p className="text-xs">{userName}</p>
                 <p>{message}</p>
               </div>
@@ -78,4 +78,3 @@ const LiveChat = () => {
 };
 
 export default LiveChat;
-

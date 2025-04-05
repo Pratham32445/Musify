@@ -1,6 +1,8 @@
 import type { User } from "./User";
 import { WsMessage } from "comman/message"
-import type { CurrentPlayingSong, Message, Song } from "comman/shared-types"
+import type { CurrentPlayingSong, Message, Song } from "comman/shared-types";
+import { updateLastPlayedSong } from "./db";
+
 
 export class Room {
     roomId: string;
@@ -124,6 +126,7 @@ export class Room {
             }
         })
         this.startPlayPlayBackInterval();
+        updateLastPlayedSong(this.roomId,this.currentPlayingSong)
     }
     startPlayPlayBackInterval() {
         if (this.playBackInterval) {

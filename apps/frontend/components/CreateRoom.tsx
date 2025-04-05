@@ -91,6 +91,7 @@ const CreateRoom = ({
           backgroundColor: "#1ed760",
         },
       });
+      setOpen(false);
       router.push(`/rooms/me/${joinRoomId}`);
     } catch (error) {
       console.log(error);

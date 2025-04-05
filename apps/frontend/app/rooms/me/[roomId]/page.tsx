@@ -8,7 +8,7 @@ import {
   useMessages,
   useQueue,
   UseRoomId,
-  useSeekUpdate,
+  useSeekUpdate,  
   useWs,
 } from "@/store/Store";
 import { WsMessage } from "comman/message";
@@ -27,12 +27,13 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
   useEffect(() => {
     async function joinRoom() {
       try {
-        const roomId = (await params).roomId[0];
+        const roomId = (await params).roomId;
         setRoomId(roomId);
+        if(ws) setIsJoined(true)
         if (roomId && data?.user.id && !ws) {
           await axios.get(
             `${process.env.NEXT_PUBLIC_BACKEND_URL!}/room/isValid-room/${roomId}`
-          );
+          );  
           const ws = new WebSocket(
             `${process.env.NEXT_PUBLIC_WS_URL!}?roomId=${roomId}&userId=${data?.user.id}`
           );
@@ -92,6 +93,6 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
       <LoaderCircle className="animate-spin" width={50} height={50} />
     </div>
   );
-};
+};  
 
 export default RoomMusic;
