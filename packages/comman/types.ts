@@ -10,6 +10,7 @@ export interface Song {
     upvotes: Set<string>;
     upvotesLength: number;
     isPlaying: boolean;
+    createdAt?: Date;
 }
 
 export interface CurrentPlayingSong extends Song {
@@ -18,7 +19,7 @@ export interface CurrentPlayingSong extends Song {
 }
 
 export interface Room {
-    Id : string;
+    Id: string;
     Name: string;
     adminId: string;
     thumbnail: string;
@@ -30,8 +31,8 @@ export interface Room {
 }
 
 export interface Message {
-    userId : string;
-    message : string;
-    userName : string;
-    time : Date;
+    userId: string;
+    message: string;
+    userName: string;
+    time: Date;
 }

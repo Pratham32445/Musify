@@ -6,6 +6,7 @@ import jwt from "jsonwebtoken"
 
 const router = express.Router();
 
+
 router.post("/sign-up", async (req, res) => {
     const parsedBody = signUpSchema.safeParse(req.body);
     if (!parsedBody.success) {
@@ -33,10 +34,10 @@ router.post("/sign-up", async (req, res) => {
             firstName: parsedBody.data.firstName
         }
     })
-    const token = jwt.sign({Id : new_user.Id},process.env.JWT_SECRET!);
-    res.cookie("authToken",token);
+    const token = jwt.sign({ Id: new_user.Id }, process.env.JWT_SECRET!);
+    res.cookie("authToken", token);
     res.json({
-        message: "Created"  
+        message: "Created"
     })
 })
 
@@ -59,8 +60,8 @@ router.post("/sign-in", async (req, res) => {
             return;
         }
     }
-    const token = jwt.sign({Id : user?.Id},process.env.JWT_SECRET!);
-    res.cookie("authToken",token);
+    const token = jwt.sign({ Id: user?.Id }, process.env.JWT_SECRET!);
+    res.cookie("authToken", token);
     res.status(401).json({
         message: "Email or password is wrong"
     })
@@ -68,6 +69,26 @@ router.post("/sign-in", async (req, res) => {
 
 router.post("/get-user", (req, res) => {
 
+})
+
+router.get("/room/:roomId", async (req, res) => {
+    const { roomId } = req.params;
+    const rooms = await prismaClient.room.findFirst({
+        where: {
+            Id: roomId
+        },
+        select: {
+            subscribers: {
+                select: {
+                    firstName: true,
+                    createdAt: true
+                }
+            }
+        }
+    })
+    res.json({
+        rooms
+    })
 })
 
 export { router as UserRouter };

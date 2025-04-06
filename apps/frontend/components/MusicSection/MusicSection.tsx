@@ -13,7 +13,7 @@ const MusicSection = () => {
         <div>
           <MusicBar />
         </div>
-        <SongQueue />
+        <SongQueue /> 
       </div>
       {show && <LiveChat />}
     </div>

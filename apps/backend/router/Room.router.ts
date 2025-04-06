@@ -122,6 +122,9 @@ router.get("/get-songs/:roomId", async (req, res) => {
         },
         select: {
             lastPlayed: true
+        },
+        orderBy : {
+            createdAt  : "desc" 
         }
     })
     res.json({

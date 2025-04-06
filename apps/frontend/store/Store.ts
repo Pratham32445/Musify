@@ -38,6 +38,12 @@ interface UserMessages {
     setInitialMessages: (messages: Message[]) => void;
 }
 
+interface isSongStarted {
+    isStarted: boolean,
+    setIsStarted: (isStart: boolean) => void;
+
+}
+
 export const useWs = create<webSocketInstance>((set) => ({
     ws: null,
     setWs: (socket: WebSocket) => {
@@ -94,5 +100,12 @@ export const useMessages = create<UserMessages>((set) => ({
     },
     setInitialMessages: (messages: Message[]) => {
         set({ messages })
+    }
+}))
+
+export const useIsPlaying = create<isSongStarted>((set) => ({
+    isStarted: false,
+    setIsStarted: (isStart: boolean) => {
+        set({ isStarted: isStart })
     }
 }))

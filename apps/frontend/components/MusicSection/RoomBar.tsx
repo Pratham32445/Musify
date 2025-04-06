@@ -44,10 +44,21 @@ const RoomBar = () => {
       title: "call",
       items: [{ name: "# Group call", to: "/group-call" }],
     },
+
     {
       title: "users",
       items: [
-        { name: "# all users", to: "/all-users" },
+        {
+          name: "# all users",
+          to: "/all-users",
+          param: roomId,
+          func: (id: string) => {
+            router.push(`/rooms/me/${id}/all-users`);
+          },
+          onClick: (func: (id: string) => void, params: string) => {
+            func(params);
+          },
+        },
         { name: "# online users", to: "/online-users" },
       ],
     },

@@ -1,30 +1,22 @@
 "use client";
-import { useCurrentSong, useSeekUpdate } from "@/store/Store";
+import { useCurrentSong, useIsPlaying } from "@/store/Store";
 import Image from "next/image";
-import React, { useEffect, useRef, useState } from "react";
-import { Play, Plus, MessageSquare, Eye, Clock, Loader } from "lucide-react";
+import React from "react";
+import {
+  Play,
+  Plus,
+  MessageSquare,
+  Eye,
+  Clock,
+  LoaderCircle,
+} from "lucide-react";
 import { useShowChat } from "@/store/Store";
-import ReactPlayer from "react-player";
 import { formattedDuration, viewsFormatter } from "@/lib/time";
 
 const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const { song } = useCurrentSong();
-  const [type, setType] = useState(0);
   const { setShowChat } = useShowChat();
-  const { seek } = useSeekUpdate();
-  const [isStarted, setisStarted] = useState(false);
-  const playerRef = useRef<null | ReactPlayer>(null);
-  const [search, setsearch] = useState("");
-
-  useEffect(() => { 
-    if (playerRef.current) {
-      const currentTime = playerRef.current.getCurrentTime();
-      if (Math.abs(currentTime - seek) > 1) {
-        playerRef.current.seekTo(seek, "seconds");
-        if (isStarted == false) setisStarted(true);
-      }
-    }
-  }, [seek]);
+  const { isStarted } = useIsPlaying();
 
   return (
     <div>
@@ -55,12 +47,9 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                   className={`bg-[#34ff7b] w-fit p-3 rounded-full transition-all duration-500`}
                 >
                   {!isStarted ? (
-                    <Loader className="animate-spin" />
+                    <LoaderCircle className="animate-spin" />
                   ) : (
-                    <Play
-                      color="#000"
-                      className={`${isStarted && "animate-spin"} cursor-pointer`}
-                    />
+                    <Play color="#000" />
                   )}
                 </div>
                 <div>
@@ -100,21 +89,6 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
             </p>
           </div>
         )}
-        {song &&
-          (type == 0 ? (
-            <div className="hidden">
-              <ReactPlayer
-                url={song?.url}
-                playing={isStarted}
-                controls={false}
-                ref={playerRef}
-                width="0"
-                height="0"
-              />
-            </div>
-          ) : (
-            <div></div>
-          ))}
       </div>
     </div>
   );
