@@ -1,18 +1,20 @@
 "use client";
 import Channels from "@/components/Channels";
+import LiveChat from "@/components/MusicSection/LiveChat";
 import RoomBar from "@/components/MusicSection/RoomBar";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useCurrentSong, useIsPlaying, useSeekUpdate } from "@/store/Store";
+import { useCurrentSong, useIsPlaying, useSeekUpdate, useShowChat } from "@/store/Store";
 import React, { useEffect, useRef } from "react";
 import ReactPlayer from "react-player";
 
 const Me = ({ children }: { children: React.ReactNode }) => {
   const playerRef = useRef<null | ReactPlayer>(null);
   const { seek } = useSeekUpdate();
+  const {show} = useShowChat();
   const { song } = useCurrentSong();
   const { isStarted, setIsStarted } = useIsPlaying();
   useEffect(() => {
@@ -24,6 +26,7 @@ const Me = ({ children }: { children: React.ReactNode }) => {
       }
     }
   }, [seek]);
+
   return (
     <div className="flex w-full min-h-screen">
       <Channels />
@@ -34,6 +37,7 @@ const Me = ({ children }: { children: React.ReactNode }) => {
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel defaultSize={80}>{children}</ResizablePanel>
+          {show && <LiveChat />}
         </ResizablePanelGroup>
       </div>
       <div className="hidden">

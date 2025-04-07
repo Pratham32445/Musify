@@ -18,7 +18,6 @@ const LiveChat = () => {
   const { messages } = useMessages();
   function sendMessage(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    console.log(message);
     ws?.send(
       JSON.stringify({
         type: WsMessage.sendMessage,
@@ -35,7 +34,7 @@ const LiveChat = () => {
   }
 
   return (
-    <div className="pt-8 pr-4">
+    <div className="pt-6 pr-4">
       <div className="w-[400px] relative h-[500px] rounded-xl bg-[#121212]">
         <div className="p-4 flex items-center justify-between">
           <p>Live Chat</p>

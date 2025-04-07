@@ -74,7 +74,7 @@ const Channels = () => {
                 <p>{room.Name[0].toUpperCase()}</p>
                 <p>
                   {room.Name.split(" ").length > 1
-                    ? room.Name.split(" ")[1]
+                    ? room.Name.split(" ")[1][0]
                     : "r"}
                 </p>
               </div>

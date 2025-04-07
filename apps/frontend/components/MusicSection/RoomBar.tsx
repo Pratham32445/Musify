@@ -11,7 +11,17 @@ const RoomBar = () => {
     {
       title: "chat",
       items: [
-        { name: "# Home", to: "/Home" },
+        {
+          name: "# Home",
+          to: "/Home",
+          param: roomId,
+          func: (id: string) => {
+            router.push(`/rooms/me/${id}`);
+          },
+          onClick: (func: (id: string) => void, params: string) => {
+            func(params);
+          },
+        },
         { name: "# General", to: "/general" },
         {
           name: "# Live chat",
@@ -76,6 +86,9 @@ const RoomBar = () => {
   ];
   return (
     <div className="py-8">
+      <div>
+        <p></p>
+      </div>
       {roomBarData.map(({ title, items }, idx) => (
         <div key={idx} className="my-4">
           <p className="text-xs text-neutral-400">{title}</p>

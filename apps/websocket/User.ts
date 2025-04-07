@@ -3,6 +3,7 @@ import { RoomManager } from "./Managers/RoomManager";
 import { WsMessage } from "comman/message";
 import { getRequestUrl, getSongDuration } from "./utils";
 import type { Song,Message as onMessage } from "comman/shared-types";
+import { UserManager } from "./Managers/UserManager";
 
 interface Message {
     type: string;
@@ -83,6 +84,10 @@ export class User {
                     userId : message.payload.userId!
                 }
                 room?.onMessage(userMessage)
+            }
+            else if(message.type == WsMessage.disconnectSocket) {
+                RoomManager.getInstance().getRoom(message.payload.roomId!)?.removeUser(this);
+                UserManager.getInstance().removeUser(this.userId);
             }
         }
     }

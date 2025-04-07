@@ -8,7 +8,7 @@ import {
   useMessages,
   useQueue,
   UseRoomId,
-  useSeekUpdate,  
+  useSeekUpdate,
   useWs,
 } from "@/store/Store";
 import { WsMessage } from "comman/message";
@@ -22,68 +22,78 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
   const { setCurrentSong } = useCurrentSong();
   const { updateSeek } = useSeekUpdate();
   const { data } = useSession();
-  const { setMessage,setInitialMessages } = useMessages();
+  const { setMessage, setInitialMessages } = useMessages();
   const [isJoined, setIsJoined] = useState(false);
+
   useEffect(() => {
+    let socket: WebSocket;
+
     async function joinRoom() {
       try {
         const roomId = (await params).roomId;
         setRoomId(roomId);
-        if(ws) setIsJoined(true)
+
+        if (ws) {
+          setIsJoined(true);
+          return;
+        }
+
         if (roomId && data?.user.id && !ws) {
           await axios.get(
             `${process.env.NEXT_PUBLIC_BACKEND_URL!}/room/isValid-room/${roomId}`
-          );  
-          const ws = new WebSocket(
+          );
+
+          socket = new WebSocket(
             `${process.env.NEXT_PUBLIC_WS_URL!}?roomId=${roomId}&userId=${data?.user.id}`
           );
-          ws.onopen = () => {
-            setWs(ws);
-            ws.send(
+
+          socket.onopen = () => {
+            setWs(socket);
+            socket.send(
               JSON.stringify({ type: WsMessage.joinRoom, payload: { roomId } })
             );
           };
-          ws.onmessage = (event) => {
+
+          socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
-            console.log(message);
-            if (message.type == WsMessage.meJoined) {
+            if (message.type === WsMessage.meJoined) {
               setIsJoined(true);
-            } else if (message.type == WsMessage.newSongUpdate) {
+            } else if (message.type === WsMessage.newSongUpdate) {
               setNewSong(message.payload.songInfo);
-              const audio = new Audio("/notification.mp3");
-              audio.play();
-            } else if (message.type == WsMessage.QueueUpdate) {
+              new Audio("/notification.mp3").play();
+            } else if (message.type === WsMessage.QueueUpdate) {
               setQueue(message.payload.Queue);
-            } else if (message.type == WsMessage.currentSong) {
+            } else if (message.type === WsMessage.currentSong) {
               setCurrentSong(message.payload);
-            } else if (message.type == WsMessage.syncUpdate) {
+            } else if (message.type === WsMessage.syncUpdate) {
               const serverSeek = message.payload.currentSeek;
               const serverTime = message.payload.timeStamp;
               const timeDiff = (Date.now() - serverTime) / 1000;
               const targetSeek = serverSeek + timeDiff;
               updateSeek(targetSeek);
-            }
-            else if(message.type == WsMessage.initialMessages) {
+            } else if (message.type === WsMessage.initialMessages) {
               setInitialMessages(message.payload.messages);
-            } 
-            else if (message.type == WsMessage.onMessage) {
+            } else if (message.type === WsMessage.onMessage) {
               setMessage(message.payload.message);
-              console.log(message.payload.message);
-              if (message.payload.message.userId != data.user.id) {
-                const audio = new Audio("/notification.mp3");
-                audio.play();
+              if (message.payload.message.userId !== data.user.id) {
+                new Audio("/notification.mp3").play();
               }
             }
           };
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
         if (isAxiosError(error)) {
           toast.error(error.response?.data.message);
         }
       }
     }
+
     joinRoom();
+
+    return () => {
+      console.log("closed");
+    };
   }, [data]);
 
   return isJoined ? (
@@ -93,6 +103,6 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
       <LoaderCircle className="animate-spin" width={50} height={50} />
     </div>
   );
-};  
+};
 
 export default RoomMusic;

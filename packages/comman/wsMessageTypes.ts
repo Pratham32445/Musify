@@ -13,5 +13,6 @@ export const WsMessage = {
     syncUpdate: "syncUpdate",
     sendMessage : "sendMessage",
     onMessage : "onMessage",
-    initialMessages : "initialMessages"
+    initialMessages : "initialMessages",
+    disconnectSocket : "disconnectSocket"
 }

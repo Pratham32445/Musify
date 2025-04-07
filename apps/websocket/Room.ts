@@ -15,7 +15,7 @@ export class Room {
     playBackInterval: NodeJS.Timeout | null;
     currentSongSeek: number;
     lastSeekUpdateTime: number;
-    messages : Message[];
+    messages: Message[];
 
     constructor(roomId: string, adminId: string) {
         this.roomId = roomId;
@@ -57,9 +57,9 @@ export class Room {
             }
         }))
         user.ws.send(JSON.stringify({
-            type : WsMessage.initialMessages,
-            payload : {
-                messages : this.messages
+            type: WsMessage.initialMessages,
+            payload: {
+                messages: this.messages
             }
         }))
     }
@@ -85,12 +85,13 @@ export class Room {
     }
     upvote(songId: string, userId: string) {
         const song = this.playBackQueue.find((song) => song.id == songId);
-        if (song && !song.upvotes.has(userId)) {
+        if (userId == this.adminId) song!.upvotesLength++;
+        else if (song && !song.upvotes.has(userId)) {
             song.upvotes.add(userId);
             song.upvotesLength = song.upvotes.size;
-            this.playBackQueue.sort((a, b) => b.upvotesLength - a.upvotesLength);
-            this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue } })
         }
+        this.playBackQueue.sort((a, b) => b.upvotesLength - a.upvotesLength);
+        this.sendUpdate({ type: WsMessage.QueueUpdate, payload: { Queue: this.playBackQueue } })
     }
     seek(userId: string, seekTime: number) {
         if (userId != this.adminId) return;
@@ -126,7 +127,7 @@ export class Room {
             }
         })
         this.startPlayPlayBackInterval();
-        updateLastPlayedSong(this.roomId,this.currentPlayingSong)
+        updateLastPlayedSong(this.roomId, this.currentPlayingSong)
     }
     startPlayPlayBackInterval() {
         if (this.playBackInterval) {
@@ -137,6 +138,7 @@ export class Room {
             if (this.currentSongSeek % 5 == 0) {
                 this.sendUpdate({
                     type: WsMessage.syncUpdate,
+                    
                     payload: {
                         currentSeek: this.currentSongSeek,
                         timeStamp: Date.now()

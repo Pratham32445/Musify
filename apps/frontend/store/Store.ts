@@ -3,7 +3,7 @@ import { CurrentPlayingSong, Message, Song } from "comman/shared-types"
 
 interface webSocketInstance {
     ws: WebSocket | null,
-    setWs: (socket: WebSocket) => void;
+    setWs: (socket: WebSocket | null) => void;
 }
 
 interface selectedRoomId {
@@ -46,7 +46,7 @@ interface isSongStarted {
 
 export const useWs = create<webSocketInstance>((set) => ({
     ws: null,
-    setWs: (socket: WebSocket) => {
+    setWs: (socket: WebSocket | null) => {
         set({ ws: socket })
     }
 }))
