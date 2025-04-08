@@ -1,6 +1,5 @@
 export function getRequestUrl(payloadUrl: string, videoId: string | null = null) {
     let video_id;
-    console.log(videoId);
     const api_token = process.env.YOUTUBE_API_KEY;
     if (!videoId) {
         const video_url = payloadUrl;
@@ -19,7 +18,6 @@ export function getSongDuration(rawDuration: string) {
     let addTime = 0;
     for (let i = 1; i < rawDuration.length; i++) {
         if (isNaN(Number(rawDuration[i]))) {
-            console.log(addTime, rawDuration[i]);
             if (rawDuration[i] == 'D') duration += (24 * 60 * 60) * addTime;
             else if (rawDuration[i] == 'H') duration += (60 * 60) * addTime;
             else if (rawDuration[i] == 'M') duration += 60 * addTime;
@@ -30,6 +28,5 @@ export function getSongDuration(rawDuration: string) {
             addTime = addTime * 10 + Number(rawDuration[i]);
         }
     }
-    console.log(duration);
     return duration;
 }

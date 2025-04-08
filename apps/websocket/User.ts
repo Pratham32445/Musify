@@ -51,6 +51,9 @@ export class User {
             else if (message.type == WsMessage.addSong) {
                 const roomId = message.payload.roomId;
                 const videoId = message.payload.videoId;
+                if (videoId) {
+                    message.payload.url = `https://www.youtube.com/watch?v=${videoId}`
+                }
                 const reqUrl = getRequestUrl(message.payload.url!, videoId);
                 if (!reqUrl) return;
                 const res = await fetch(reqUrl);

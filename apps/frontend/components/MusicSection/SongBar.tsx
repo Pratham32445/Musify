@@ -18,7 +18,6 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const { song } = useCurrentSong();
   const { setShowChat } = useShowChat();
   const { isStarted } = useIsPlaying();
-  console.log(isStarted);
   return (
     <div>
       <div

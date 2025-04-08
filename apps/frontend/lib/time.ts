@@ -2,7 +2,7 @@ export function formattedDuration(duration: number) {
     const hours = Math.floor(duration / 3600);
     duration = duration - hours * 3600;
     const minutes = Math.floor(duration / 60);
-    duration = duration - minutes * 60;
+    duration = Math.floor(duration) - minutes * 60;
     const seconds = duration;
     let durationStr = "";
     if (hours) durationStr += hours < 10 ? `0${hours}:` : `${hours}:`
