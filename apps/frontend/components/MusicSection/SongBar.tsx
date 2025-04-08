@@ -3,21 +3,22 @@ import { useCurrentSong, useIsPlaying } from "@/store/Store";
 import Image from "next/image";
 import React from "react";
 import {
-  Play,
   Plus,
   MessageSquare,
   Eye,
   Clock,
   LoaderCircle,
+  Pause,
 } from "lucide-react";
 import { useShowChat } from "@/store/Store";
 import { formattedDuration, viewsFormatter } from "@/lib/time";
+import SongDurationSeek from "./SongDurationSeek";
 
 const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const { song } = useCurrentSong();
   const { setShowChat } = useShowChat();
   const { isStarted } = useIsPlaying();
-
+  console.log(isStarted);
   return (
     <div>
       <div
@@ -44,12 +45,12 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
               </div>
               <div className="flex gap-4 items-center my-2">
                 <div
-                  className={`bg-[#34ff7b] w-fit p-3 rounded-full transition-all duration-500`}
+                  className={`bg-[#34ff7b] w-fit p-3 rounded-full transition-all duration-500 ${isStarted && "animate-pulse"}`}
                 >
                   {!isStarted ? (
                     <LoaderCircle className="animate-spin" />
                   ) : (
-                    <Play color="#000" />
+                    <Pause color="#000" />
                   )}
                 </div>
                 <div>
@@ -74,6 +75,7 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                   <Eye />
                   <p className="font-bold">{viewsFormatter(song.views)}</p>
                 </div>
+                <SongDurationSeek/>
               </div>
             </div>
           </div>

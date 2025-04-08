@@ -56,6 +56,7 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
 
           socket.onmessage = (event) => {
             const message = JSON.parse(event.data);
+            console.log(message);
             if (message.type === WsMessage.meJoined) {
               setIsJoined(true);
             } else if (message.type === WsMessage.newSongUpdate) {

@@ -2,7 +2,7 @@ import { WebSocket } from "ws";
 import { RoomManager } from "./Managers/RoomManager";
 import { WsMessage } from "comman/message";
 import { getRequestUrl, getSongDuration } from "./utils";
-import type { Song,Message as onMessage } from "comman/shared-types";
+import type { Song, Message as onMessage } from "comman/shared-types";
 import { UserManager } from "./Managers/UserManager";
 
 interface Message {
@@ -13,9 +13,10 @@ interface Message {
         adminId?: string;
         songId?: string;
         userId?: string;
-        message? : string;
-        userName? :string;
-        time? : Date;
+        message?: string;
+        userName?: string;
+        time?: Date;
+        videoId?: string | null;
     }
 }
 
@@ -49,7 +50,8 @@ export class User {
             }
             else if (message.type == WsMessage.addSong) {
                 const roomId = message.payload.roomId;
-                const reqUrl = getRequestUrl(message.payload.url!);
+                const videoId = message.payload.videoId;
+                const reqUrl = getRequestUrl(message.payload.url!, videoId);
                 if (!reqUrl) return;
                 const res = await fetch(reqUrl);
                 const data = await res.json();
@@ -75,17 +77,17 @@ export class User {
                     room.upvote(message.payload.songId!, message.payload.userId!)
                 }
             }
-            else if(message.type == WsMessage.sendMessage) {
+            else if (message.type == WsMessage.sendMessage) {
                 const room = RoomManager.getInstance().getRoom(message.payload.roomId!);
-                const userMessage : onMessage = {
-                    message : message.payload.message!,
-                    userName : message.payload.userName!,
-                    time : message.payload.time!,
-                    userId : message.payload.userId!
+                const userMessage: onMessage = {
+                    message: message.payload.message!,
+                    userName: message.payload.userName!,
+                    time: message.payload.time!,
+                    userId: message.payload.userId!
                 }
                 room?.onMessage(userMessage)
             }
-            else if(message.type == WsMessage.disconnectSocket) {
+            else if (message.type == WsMessage.disconnectSocket) {
                 RoomManager.getInstance().getRoom(message.payload.roomId!)?.removeUser(this);
                 UserManager.getInstance().removeUser(this.userId);
             }

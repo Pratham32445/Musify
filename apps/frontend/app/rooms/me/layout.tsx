@@ -17,6 +17,7 @@ const Me = ({ children }: { children: React.ReactNode }) => {
   const {show} = useShowChat();
   const { song } = useCurrentSong();
   const { isStarted, setIsStarted } = useIsPlaying();
+  
   useEffect(() => {
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime();

@@ -1,10 +1,17 @@
-export function getRequestUrl(payloadUrl: string) {
+export function getRequestUrl(payloadUrl: string, videoId: string | null = null) {
+    let video_id;
+    console.log(videoId);
     const api_token = process.env.YOUTUBE_API_KEY;
-    const video_url = payloadUrl;
-    const params = new URL(video_url!);
-    const videoId = params.searchParams.get('v')!;
-    const url = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${api_token}&part=snippet,contentDetails,statistics`
-    return url;
+    if (!videoId) {
+        const video_url = payloadUrl;
+        if (video_url.split("//")[1].startsWith("www.youtube.com")) {
+            const params = new URL(video_url!);
+            video_id = params.searchParams.get('v')!;
+        }
+        else video_id = video_url.split("youtu.be/")[1].split("?")[0];
+    }
+    else video_id = videoId;
+    return `https://www.googleapis.com/youtube/v3/videos?id=${video_id}&key=${api_token}&part=snippet,contentDetails,statistics`
 }
 
 export function getSongDuration(rawDuration: string) {

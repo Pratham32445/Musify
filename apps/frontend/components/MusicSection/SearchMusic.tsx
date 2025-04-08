@@ -10,12 +10,20 @@ import {
   CommandSeparator,
 } from "@/components/ui/command";
 import { debounce } from "@/utils/debounce";
+import { getVideoId } from "@/utils/getVideoDetails";
+import { UseRoomId, useWs } from "@/store/Store";
+import { WsMessage } from "comman/message";
 
 const SearchMusic = () => {
   const [suggestions, setSuggestions] = useState<[string[]]>([[]]);
+  const { ws } = useWs();
+  const { roomId } = UseRoomId();
   async function handleSearchQuery(query: string) {
     try {
-      if(query.length == 0) return ;
+      if (query.length == 0) {
+        setSuggestions([[]]);
+        return;
+      }
       const res = await fetch(`/api/suggestion?query=${query}`);
       const suggestedResult = await res.json();
       setSuggestions(suggestedResult || [[]]);
@@ -24,19 +32,29 @@ const SearchMusic = () => {
       setSuggestions([[]]);
     }
   }
-  const debounceSearch = debounce(handleSearchQuery, 1000);
+  async function addSong(query: string) {
+    const videoId = await getVideoId(query);
+    ws?.send(
+      JSON.stringify({ type: WsMessage.addSong, payload: { roomId, videoId } })
+    );
+    setSuggestions([[]]);
+  }
+  const debounceSearch = debounce(handleSearchQuery, 300);
   return (
     <Command>
       <CommandInput
         onValueChange={(e) => debounceSearch(e)}
         placeholder="Type a command or search..."
       />
-      <CommandList>
+      <CommandList > 
         <CommandEmpty>No results found.</CommandEmpty>
-        <CommandGroup heading="Suggestions">
-          {suggestions && suggestions.map((suggestion, key) => (
-            <CommandItem key={key}>{suggestion && suggestion[0]}</CommandItem>
-          ))}
+        <CommandGroup  heading="Suggestions">
+          {suggestions &&
+            suggestions.map((suggestion, key) => (
+              <CommandItem onSelect={(value) => addSong(value)} key={key}>
+                {suggestion && suggestion[0]}
+              </CommandItem>
+            ))}
         </CommandGroup>
         <CommandSeparator />
       </CommandList>
