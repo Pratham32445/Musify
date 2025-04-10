@@ -14,7 +14,6 @@ export class RoomManager {
     createRoom(roomId: string, adminId: string) {
         const newRoom = new Room(roomId, adminId);
         this.rooms.set(roomId, newRoom);
-        console.log(this.rooms);
     }
     deleteRoom(roomId : string) {
         if(this.rooms.has(roomId)) this.rooms.delete(roomId);

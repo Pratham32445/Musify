@@ -93,6 +93,7 @@ export class User {
             else if (message.type == WsMessage.disconnectSocket) {
                 RoomManager.getInstance().getRoom(message.payload.roomId!)?.removeUser(this);
                 UserManager.getInstance().removeUser(this.userId);
+                console.log(UserManager.getInstance().users,"users");
             }
         }
     }

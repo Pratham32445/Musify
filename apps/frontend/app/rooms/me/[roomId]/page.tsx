@@ -18,14 +18,16 @@ import { LoaderCircle } from "lucide-react";
 const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
   const { setWs, ws } = useWs();
   const { setQueue, setNewSong } = useQueue();
-  const { setRoomId } = UseRoomId();
-  const { setCurrentSong } = useCurrentSong();
+  const { setRoomId,roomId } = UseRoomId();
+  const { setCurrentSong} = useCurrentSong();
   const { updateSeek } = useSeekUpdate();
   const { data } = useSession();
   const { setMessage, setInitialMessages } = useMessages();
   const [isJoined, setIsJoined] = useState(false);
 
   useEffect(() => {
+    if(!data) return ;
+
     let socket: WebSocket;
 
     async function joinRoom() {
@@ -79,6 +81,8 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
               if (message.payload.message.userId !== data.user.id) {
                 new Audio("/notification.mp3").play();
               }
+            } else if(message.type == WsMessage.toastMessage) {
+              toast.message(message.payload.message);
             }
           };
         }
@@ -93,7 +97,12 @@ const RoomMusic = ({ params }: { params: Promise<{ roomId: string }> }) => {
     joinRoom();
 
     return () => {
-      console.log("closed");
+      if(ws) {
+        console.log("socket",ws);
+        ws.send(JSON.stringify({type : WsMessage.disconnectSocket,payload : {roomId}}));
+        setWs(null);
+        setCurrentSong(null)
+      }
     };
   }, [data]);
 

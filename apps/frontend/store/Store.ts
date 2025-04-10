@@ -24,7 +24,7 @@ interface ShowChat {
 
 interface CurrentSong {
     song: CurrentPlayingSong | null;
-    setCurrentSong: (song: CurrentPlayingSong) => void;
+    setCurrentSong: (song: CurrentPlayingSong | null) => void;
 }
 
 interface SeekUpdate {
@@ -79,7 +79,7 @@ export const useShowChat = create<ShowChat>((set) => ({
 
 export const useCurrentSong = create<CurrentSong>((set) => ({
     song: null,
-    setCurrentSong: (newSong: CurrentPlayingSong) => {
+    setCurrentSong: (newSong: CurrentPlayingSong | null) => {
         set({ song: newSong })
     }
 }))

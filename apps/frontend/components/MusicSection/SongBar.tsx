@@ -34,12 +34,14 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
             <div className="z-50 absolute w-full p-5">
               <div>
                 <p className="font-bold text-3xl my-2">
-                  {song.title.substring(0, 30) +
-                    (song.title.length > 30 && "...")}{" "}
+                  {song.title.length > 30
+                    ? song.title.substring(0, 30) + "..."
+                    : song.title}
                 </p>
                 <p className="my-2">
-                  {song.description.substring(0, 150) +
-                    (song.title.length > 100 && "...")}
+                  {song.description.length > 150
+                    ? song.description.substring(0, 150) + "..."
+                    : song.description}
                 </p>
               </div>
               <div className="flex gap-4 items-center my-2">
@@ -74,7 +76,7 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
                   <Eye />
                   <p className="font-bold">{viewsFormatter(song.views)}</p>
                 </div>
-                <SongDurationSeek/>
+                <SongDurationSeek />
               </div>
             </div>
           </div>

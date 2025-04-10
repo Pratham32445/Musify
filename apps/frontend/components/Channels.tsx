@@ -5,14 +5,15 @@ import { User, Plus, LoaderCircle } from "lucide-react";
 import CreateRoom from "./CreateRoom";
 import axios from "axios";
 import { Room } from "comman/shared-types";
-import { useRouter } from "next/navigation";  
+import { useRouter, usePathname } from "next/navigation";
 
 const Channels = () => {
-  const [selectedChannel, setSelectedChannel] = useState(-1);
+  const [selectedChannel, setSelectedChannel] = useState("");
   const [open, setOpen] = useState(false);
   const [rooms, setRooms] = useState<Room[]>();
   const [isLoading, setIsLoading] = useState(true);
   const router = useRouter();
+  const pathName = usePathname();
   useEffect(() => {
     async function getUserChannels() {
       const tokenData = await axios.get("/api/token");
@@ -30,8 +31,14 @@ const Channels = () => {
     getUserChannels();
   }, []);
 
-  function goToChannel(Id: string, idx: number) {
-    setSelectedChannel(idx);
+  useEffect(() => {
+    const pathNameSplit = pathName.split("/");
+    if (pathNameSplit[pathNameSplit.length - 1] == "me") setSelectedChannel("");
+    else setSelectedChannel(pathNameSplit[pathNameSplit.length - 1]);
+  }, []);
+
+  function goToChannel(Id: string) {
+    setSelectedChannel(Id);
     router.push(`/rooms/me/${Id}`);
   }
 
@@ -39,10 +46,13 @@ const Channels = () => {
     <div className="mt-10">
       <div
         className="my-4 flex items-center gap-4 pr-4 cursor-pointer"
-        onClick={() => setSelectedChannel(-1)}
+        onClick={() => {
+          setSelectedChannel("");
+          router.push(`/rooms/me`);
+        }}
       >
         <div
-          className={`w-1 h-${selectedChannel == -1 ? "8" : "1"} bg-white rounded-full`}
+          className={`w-1 h-${selectedChannel == "" ? "8" : "1"} bg-white rounded-full`}
         ></div>
         <div className="w-[40px] h-[40px] flex justify-center items-center rounded bg-[#1ed760]">
           <User />
@@ -52,12 +62,12 @@ const Channels = () => {
         rooms &&
         rooms.map((room, idx) => (
           <div
-            onClick={() => goToChannel(room.Id, idx)}
+            onClick={() => goToChannel(room.Id)}
             className="my-4 flex items-center gap-4 pr-4 cursor-pointer"
             key={idx}
           >
             <div
-              className={`w-1 h-${selectedChannel == idx ? "8" : "3"} bg-white rounded-full`}
+              className={`w-1 h-${selectedChannel == room.Id ? "8" : "3"} bg-white rounded-full`}
             ></div>
             {room.thumbnail ? (
               <Image
@@ -69,7 +79,7 @@ const Channels = () => {
               />
             ) : (
               <div
-                className={`flex justify-center items-center ${selectedChannel != idx ? "bg-neutral-700" : "bg-[#5865F2]"} w-full p-2 rounded`}
+                className={`flex justify-center items-center ${selectedChannel != room.Id ? "bg-neutral-700" : "bg-[#5865F2]"} w-full p-2 rounded`}
               >
                 <p>{room.Name[0].toUpperCase()}</p>
                 <p>

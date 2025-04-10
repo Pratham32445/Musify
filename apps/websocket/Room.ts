@@ -32,6 +32,7 @@ export class Room {
     }
 
     addUser(user: User) {
+        console.log(user);
         this.subscribers.push(user);
         this.sendUpdate({ type: WsMessage.newUserJoined, payload: { user } })
         if (this.currentPlayingSong) {
@@ -62,13 +63,20 @@ export class Room {
                 messages: this.messages
             }
         }))
+        if (this.playBackQueue.length > 0) {
+            user.ws.send(JSON.stringify({
+                type: WsMessage.toastMessage,
+                payload: {
+                    message: "Syncing Music can take some time for the first time please wait for it..."
+                }
+            }))
+        }
     }
     removeUser(user: User) {
         this.subscribers = this.subscribers.filter((subscriber) => subscriber.userId != user.userId);
         this.sendUpdate({ type: "remove_user", payload: { Id: user.userId } });
     }
     addSong(songInfo: Song) {
-        console.log(songInfo);
         this.playBackQueue.push(songInfo);
         const message = {
             type: WsMessage.newSongUpdate,
@@ -138,7 +146,7 @@ export class Room {
             if (this.currentSongSeek % 5 == 0) {
                 this.sendUpdate({
                     type: WsMessage.syncUpdate,
-                    
+
                     payload: {
                         currentSeek: this.currentSongSeek,
                         timeStamp: Date.now()

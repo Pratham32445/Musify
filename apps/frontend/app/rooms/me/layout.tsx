@@ -1,23 +1,31 @@
 "use client";
 import Channels from "@/components/Channels";
 import LiveChat from "@/components/MusicSection/LiveChat";
-import RoomBar from "@/components/MusicSection/RoomBar";
 import {
   ResizableHandle,
   ResizablePanel,
   ResizablePanelGroup,
 } from "@/components/ui/resizable";
-import { useCurrentSong, useIsPlaying, useSeekUpdate, useShowChat } from "@/store/Store";
+import UserInfo from "@/components/UserInfo";
+import {
+  useCurrentSong,
+  useIsPlaying,
+  useSeekUpdate,
+  useShowChat,
+} from "@/store/Store";
 import React, { useEffect, useRef } from "react";
 import ReactPlayer from "react-player";
+import { usePathname } from "next/navigation";
+import RoomBar from "@/components/MusicSection/RoomBar";
 
 const Me = ({ children }: { children: React.ReactNode }) => {
   const playerRef = useRef<null | ReactPlayer>(null);
   const { seek } = useSeekUpdate();
-  const {show} = useShowChat();
+  const { show } = useShowChat();
   const { song } = useCurrentSong();
   const { isStarted, setIsStarted } = useIsPlaying();
-  
+  const pathname = usePathname();
+
   useEffect(() => {
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime();
@@ -33,23 +41,25 @@ const Me = ({ children }: { children: React.ReactNode }) => {
       <Channels />
       <div className="w-full">
         <ResizablePanelGroup direction="horizontal">
-          <ResizablePanel defaultSize={20}>
-            <RoomBar />
+          <ResizablePanel defaultSize={15}>
+            {pathname == "/rooms/me" ? <UserInfo /> : <RoomBar />}
           </ResizablePanel>
           <ResizableHandle withHandle />
-          <ResizablePanel defaultSize={80}>{children}</ResizablePanel>
+          <ResizablePanel defaultSize={85}>{children}</ResizablePanel>
           {show && <LiveChat />}
         </ResizablePanelGroup>
       </div>
       <div className="hidden">
-        <ReactPlayer
-          url={song?.url}
-          playing={isStarted}
-          controls={false}
-          ref={playerRef}
-          width="0"
-          height="0"
-        />
+        {song && (
+          <ReactPlayer
+            url={song?.url}
+            playing={isStarted}
+            controls={false}
+            ref={playerRef}
+            width="0"
+            height="0"
+          />
+        )}
       </div>
     </div>
   );
