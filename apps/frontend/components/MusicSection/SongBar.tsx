@@ -1,5 +1,5 @@
 "use client";
-import { useCurrentSong, useIsPlaying } from "@/store/Store";
+import { useCurrentSong, useIsPaused, useIsPlaying } from "@/store/Store";
 import Image from "next/image";
 import React from "react";
 import {
@@ -7,8 +7,8 @@ import {
   MessageSquare,
   Eye,
   Clock,
-  LoaderCircle,
   Pause,
+  Play,
 } from "lucide-react";
 import { useShowChat } from "@/store/Store";
 import { formattedDuration, viewsFormatter } from "@/lib/time";
@@ -17,11 +17,16 @@ import SongDurationSeek from "./SongDurationSeek";
 const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
   const { song } = useCurrentSong();
   const { setShowChat } = useShowChat();
-  const { isStarted } = useIsPlaying();
+  const { isStarted, setIsStarted } = useIsPlaying();
+  const {setisPaused,isPaused} = useIsPaused();
+  function changeSongState() {
+    setIsStarted(!isStarted);
+    setisPaused(!isPaused);
+  }
   return (
     <div>
       <div
-        className={`flex ${!song && "bg-[#34ff7b]"} items-center gap-10 w-full h-[400px] relative`}
+        className={`flex ${!song && "bg-[var(--color-green)]"} items-center gap-10 w-full h-[400px] relative`}
       >
         {song ? (
           <div>
@@ -46,10 +51,11 @@ const SongBar = ({ setOpen }: { setOpen: (open: boolean) => void }) => {
               </div>
               <div className="flex gap-4 items-center my-2">
                 <div
-                  className={`bg-[#34ff7b] w-fit p-3 rounded-full transition-all duration-500 ${isStarted && "animate-pulse"}`}
+                  className={`bg-[var(--color-green)] w-fit p-3 rounded-full transition-all duration-500 ${isStarted && "animate-pulse"}`}
+                  onClick={changeSongState}
                 >
                   {!isStarted ? (
-                    <LoaderCircle className="animate-spin" />
+                    <Play />
                   ) : (
                     <Pause color="#000" />
                   )}

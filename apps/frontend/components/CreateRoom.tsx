@@ -14,6 +14,7 @@ import axios, { isAxiosError } from "axios";
 import { toast } from "sonner";
 import { useRouter } from "next/navigation";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Loader } from "lucide-react";
 
 const CreateRoom = ({
   open,
@@ -34,6 +35,8 @@ const CreateRoom = ({
     thumbnail: "",
   });
   const [joinRoomId, setJoinRoomId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+
   function roomInfo(e: React.ChangeEvent<HTMLInputElement>) {
     const { name, type, checked, value, files } = e.target;
     setRoomObj((prev) => ({
@@ -48,6 +51,7 @@ const CreateRoom = ({
         isPrivate: "",
         thumbnail: "",
       });
+      setIsLoading(true);
       const tokenData = await axios.get("/api/token");
       const room = await axios.post(
         `${process.env.NEXT_PUBLIC_BACKEND_URL!}/room/create-room`,
@@ -64,11 +68,13 @@ const CreateRoom = ({
           backgroundColor: "#1ed760",
         },
       });
+      setIsLoading(false);
       setOpen(false);
       router.push(`/rooms/me/${room.data.roomId}`);
     } catch (error) {
       if (isAxiosError(error)) {
         setErrors(error.response?.data.errors);
+        setIsLoading(false);
         console.log(error.response?.data.errors);
       }
     }
@@ -97,7 +103,7 @@ const CreateRoom = ({
       console.log(error);
       if (isAxiosError(error)) {
         toast.error(error.response?.data.message);
-        console.log(error.response?.data.message); 
+        console.log(error.response?.data.message);
       }
     }
   }
@@ -155,9 +161,10 @@ const CreateRoom = ({
                 <p>{errors.thumbnail}</p>
                 <Button
                   onClick={createRoom}
+                  disabled={isLoading}
                   className="my-2 float-right bg-[#1ed760]"
                 >
-                  Create
+                  Create {isLoading && <Loader />}
                 </Button>
               </div>
             </DialogHeader>

@@ -16,6 +16,7 @@ export class UserManager {
         if (this.users.has(userId)) return;
         const newUser = new User(userId, ws);
         this.users.set(userId, newUser);
+        console.log(this.users.size);
     }
     removeUser(userId: string) {
         this.users.delete(userId);

@@ -15,5 +15,6 @@ export const WsMessage = {
     onMessage : "onMessage",
     initialMessages : "initialMessages",
     disconnectSocket : "disconnectSocket",
-    toastMessage : "toastMessage"
+    toastMessage : "toastMessage",
+    noNextSong : "noNextSong"
 }

@@ -48,8 +48,11 @@ router.get("/get-rooms", authMiddleware, async (req, res) => {
         }
     })
 
+    const rooms = [...userAsAdminRooms];
+    if (userRooms && userRooms.subscribedRooms) rooms.push(...userRooms.subscribedRooms);
+
     res.json({
-        rooms: [...userAsAdminRooms, ...userRooms!.subscribedRooms]
+        rooms
     })
 })
 
@@ -122,9 +125,6 @@ router.get("/get-songs/:roomId", async (req, res) => {
         },
         select: {
             lastPlayed: true
-        },
-        orderBy : {
-            createdAt  : "desc" 
         }
     })
     res.json({

@@ -34,6 +34,7 @@ const SearchMusic = () => {
   }
   async function addSong(query: string) {
     const videoId = await getVideoId(query);
+    console.log(ws,"socket");
     ws?.send(
       JSON.stringify({ type: WsMessage.addSong, payload: { roomId, videoId } })
     );

@@ -9,6 +9,7 @@ import {
 import UserInfo from "@/components/UserInfo";
 import {
   useCurrentSong,
+  useIsPaused,
   useIsPlaying,
   useSeekUpdate,
   useShowChat,
@@ -25,13 +26,14 @@ const Me = ({ children }: { children: React.ReactNode }) => {
   const { song } = useCurrentSong();
   const { isStarted, setIsStarted } = useIsPlaying();
   const pathname = usePathname();
+  const { isPaused } = useIsPaused();
 
   useEffect(() => {
     if (playerRef.current) {
       const currentTime = playerRef.current.getCurrentTime();
       if (Math.abs(currentTime - seek) > 1) {
         playerRef.current.seekTo(seek, "seconds");
-        if (isStarted == false) setIsStarted(true);
+        if (!isPaused && isStarted == false) setIsStarted(true);
       }
     }
   }, [seek]);

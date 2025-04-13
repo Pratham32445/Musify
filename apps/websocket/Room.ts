@@ -32,7 +32,6 @@ export class Room {
     }
 
     addUser(user: User) {
-        console.log(user);
         this.subscribers.push(user);
         this.sendUpdate({ type: WsMessage.newUserJoined, payload: { user } })
         if (this.currentPlayingSong) {
@@ -63,7 +62,7 @@ export class Room {
                 messages: this.messages
             }
         }))
-        if (this.playBackQueue.length > 0) {
+        if (this.playBackQueue.length > 0 || this.currentPlayingSong) {
             user.ws.send(JSON.stringify({
                 type: WsMessage.toastMessage,
                 payload: {
@@ -167,6 +166,9 @@ export class Room {
         this.currentSongSeek = 0;
         if (this.playBackQueue.length > 0) {
             this.playSong();
+        }
+        else {
+            this.sendUpdate({type : WsMessage.noNextSong});   
         }
     }
     checkRoomStatus() {

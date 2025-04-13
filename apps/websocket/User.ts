@@ -31,6 +31,7 @@ export class User {
     initHandlers() {
         this.ws.onmessage = async (event) => {
             const message: Message = JSON.parse(event.data.toString());
+            console.log(message);
             if (message.type == WsMessage.createRoom) {
                 const roomId = message.payload.roomId!;
                 RoomManager.getInstance().createRoom(roomId, this.userId);
@@ -91,9 +92,9 @@ export class User {
                 room?.onMessage(userMessage)
             }
             else if (message.type == WsMessage.disconnectSocket) {
+                console.log("request");
                 RoomManager.getInstance().getRoom(message.payload.roomId!)?.removeUser(this);
                 UserManager.getInstance().removeUser(this.userId);
-                console.log(UserManager.getInstance().users,"users");
             }
         }
     }

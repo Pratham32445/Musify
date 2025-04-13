@@ -44,6 +44,16 @@ interface isSongStarted {
 
 }
 
+interface Joined {
+    isJoined: boolean,
+    setIsJoined: (joined: boolean) => void;
+}
+
+interface isPaused {
+    isPaused: boolean,
+    setisPaused: (paused: boolean) => void;
+}
+
 export const useWs = create<webSocketInstance>((set) => ({
     ws: null,
     setWs: (socket: WebSocket | null) => {
@@ -107,5 +117,19 @@ export const useIsPlaying = create<isSongStarted>((set) => ({
     isStarted: false,
     setIsStarted: (isStart: boolean) => {
         set({ isStarted: isStart })
+    }
+}))
+
+export const useIsJoined = create<Joined>((set) => ({
+    isJoined: false,
+    setIsJoined: (joined: boolean) => {
+        set({ isJoined: joined })
+    }
+}))
+
+export const useIsPaused = create<isPaused>((set) => ({
+    isPaused: false,
+    setisPaused: (paused: boolean) => {
+        set({ isPaused: paused })
     }
 }))
